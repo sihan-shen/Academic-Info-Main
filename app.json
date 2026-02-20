@@ -6,7 +6,12 @@
     "pages/tutor-detail/tutor-detail",
     "pages/user/user",
     "pages/favorites/favorites",
-    "pages/tutor-library/tutor-library"
+    "pages/tutor-library/tutor-library",
+    "pages/edit-profile/edit-profile",
+    "pages/vip/vip",
+    "pages/help/help",
+    "pages/service/service",
+    "pages/privacy/privacy"
   ],
   "window": {
     "backgroundTextStyle": "light",

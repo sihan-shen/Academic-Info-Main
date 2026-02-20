@@ -1,0 +1,259 @@
+/** pages/service/service.wxss **/
+
+page {
+  background-color: #f0f4fb;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ===== Chat Area ===== */
+.chat-area {
+  flex: 1;
+  padding: 20rpx 28rpx 0;
+  overflow-y: auto;
+}
+
+.chat-bottom-pad {
+  height: 40rpx;
+}
+
+/* Date Label */
+.date-label {
+  text-align: center;
+  margin: 20rpx 0 30rpx;
+}
+
+.date-label text {
+  font-size: 22rpx;
+  color: #999;
+  background: #e4eaf5;
+  padding: 8rpx 24rpx;
+  border-radius: 20rpx;
+}
+
+/* Message Row */
+.msg-row {
+  display: flex;
+  margin-bottom: 24rpx;
+  align-items: flex-start;
+}
+
+.msg-left {
+  flex-direction: row;
+}
+
+.msg-right {
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+/* Avatars */
+.bot-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  background: #3468b5;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.bot-avatar-ico {
+  font-size: 36rpx;
+}
+
+.user-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  background: #3d6fbf;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+.user-avatar-ico {
+  font-size: 36rpx;
+}
+
+/* Bubbles */
+.msg-content-wrap {
+  max-width: 72%;
+  display: flex;
+  flex-direction: column;
+}
+
+.msg-content-right {
+  align-items: flex-end;
+}
+
+.bubble {
+  padding: 24rpx 28rpx;
+  font-size: 28rpx;
+  line-height: 1.7;
+  word-break: break-all;
+}
+
+.bubble text {
+  font-size: 28rpx;
+}
+
+.bubble-left {
+  background: #fff;
+  color: #333;
+  border-radius: 4rpx 24rpx 24rpx 24rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0,0,0,0.04);
+}
+
+.bubble-right {
+  background: #3468b5;
+  color: #fff;
+  border-radius: 24rpx 4rpx 24rpx 24rpx;
+}
+
+.msg-time {
+  font-size: 20rpx;
+  color: #bbb;
+  margin-top: 8rpx;
+  margin-left: 4rpx;
+}
+
+.msg-time-right {
+  margin-left: 0;
+  margin-right: 4rpx;
+}
+
+/* ===== Quick Questions ===== */
+.quick-section {
+  margin-top: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.quick-title {
+  text-align: center;
+  margin-bottom: 20rpx;
+}
+
+.quick-title text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.quick-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.quick-btn {
+  width: calc(50% - 8rpx);
+  background: #fff;
+  border: 2rpx solid #3468b5;
+  border-radius: 36rpx;
+  padding: 18rpx 0;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.quick-btn text {
+  font-size: 24rpx;
+  color: #3468b5;
+}
+
+/* ===== Input Area ===== */
+.input-area {
+  background: #fff;
+  padding: 20rpx 28rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  border-top: 2rpx solid #eee;
+  flex-shrink: 0;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  background: #f5f6f8;
+  border-radius: 40rpx;
+  padding: 6rpx 6rpx 6rpx 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.msg-input {
+  flex: 1;
+  font-size: 26rpx;
+  color: #333;
+  height: 68rpx;
+}
+
+.input-placeholder {
+  color: #bbb;
+  font-size: 26rpx;
+}
+
+.send-btn {
+  width: 68rpx;
+  height: 68rpx;
+  background: #3468b5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.send-ico {
+  color: #fff;
+  font-size: 32rpx;
+}
+
+/* Action Buttons */
+.action-row {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.action-ico {
+  font-size: 24rpx;
+  margin-right: 8rpx;
+}
+
+.action-btn-online {
+  background: #2da55e;
+  color: #fff;
+}
+
+.action-btn-phone {
+  background: #3468b5;
+  color: #fff;
+}
+
+/* Service Hours */
+.service-hours {
+  display: block;
+  text-align: center;
+  font-size: 20rpx;
+  color: #bbb;
+}

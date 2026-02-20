@@ -10,33 +10,27 @@
 .tabs {
   background: white;
   display: flex;
-  border-bottom: 1rpx solid #eee;
+  padding: 20rpx 24rpx;
+  gap: 16rpx;
+  border-bottom: 1rpx solid #f0f0f0;
 }
 
 .tab-item {
   flex: 1;
   text-align: center;
-  padding: 24rpx 0;
+  padding: 18rpx 0;
   font-size: 28rpx;
   color: #6a7282;
-  position: relative;
+  border-radius: 40rpx;
+  border: 2rpx solid #d8e2f0;
+  background: #fff;
 }
 
 .tab-item.active {
-  color: #2b7fff;
+  color: #fff;
   font-weight: bold;
-}
-
-.tab-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40rpx;
-  height: 4rpx;
-  background: #2b7fff;
-  border-radius: 2rpx;
+  background: #3468b5;
+  border-color: #3468b5;
 }
 
 .content-scroll {

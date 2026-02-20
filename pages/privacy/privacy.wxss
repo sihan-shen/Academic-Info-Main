@@ -1,0 +1,124 @@
+/** pages/privacy/privacy.wxss **/
+
+page {
+  background-color: #f5f6f8;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 0 0 60rpx;
+  box-sizing: border-box;
+}
+
+/* Section Label */
+.section-label {
+  font-size: 24rpx;
+  color: #888;
+  padding: 24rpx 32rpx 16rpx;
+}
+
+/* Card */
+.card {
+  background: #fff;
+  margin: 0 0 0;
+  border-radius: 0;
+}
+
+/* Row */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx 32rpx;
+}
+
+.row-border {
+  border-bottom: 1rpx solid #f3f3f3;
+}
+
+.row-left {
+  display: flex;
+  align-items: center;
+}
+
+/* Icon Circles */
+.ico-circle {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
+
+.ico-pink {
+  background: #fde8ef;
+  color: #e84393;
+}
+
+.ico-orange {
+  background: #fff3e0;
+  color: #e67e22;
+}
+
+.ico-gray {
+  background: #f0f1f3;
+  color: #666;
+}
+
+.ico-green {
+  background: #e6f7ed;
+  color: #27ae60;
+}
+
+.ico-blue {
+  background: #e8f0fe;
+  color: #3a7bd5;
+}
+
+.ico-red {
+  background: #fee8e8;
+  color: #e04343;
+}
+
+.ico-teal {
+  background: #e0f5f5;
+  color: #0ea5a5;
+}
+
+.ico-gray2 {
+  background: #f0f1f3;
+  color: #999;
+}
+
+/* Row Title */
+.row-title {
+  font-size: 30rpx;
+  color: #333;
+}
+
+/* Row Right */
+.row-right {
+  display: flex;
+  align-items: center;
+}
+
+.row-action {
+  font-size: 26rpx;
+  color: #999;
+  margin-right: 8rpx;
+}
+
+.row-action-blue {
+  font-size: 26rpx;
+  color: #3468b5;
+  margin-right: 8rpx;
+}
+
+.row-arrow {
+  font-size: 26rpx;
+  color: #ccc;
+}
