@@ -1,0 +1,31 @@
+name: Trigger Parent Update
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+jobs:
+  notify-parent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger parent repository
+        run: |
+          PARENT_OWNER="sihan-shen"
+          PARENT_REPO="Academic-Info-Main"
+          COMMIT_SHA="${{ github.sha }}"
+
+          curl -X POST \
+            "https://api.github.com/repos/${PARENT_OWNER}/${PARENT_REPO}/dispatches" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.PARENT_REPO_PAT }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "event_type": "submodule_updated",
+              "client_payload": {
+                "submodule": "frontend",
+                "commit_sha": "'"$COMMIT_SHA"'"
+              }
+            }'
