@@ -8,16 +8,16 @@
 
 当前包含的子模块：
 - `crawler`: [Academic_Search](https://github.com/Radiumy/Academic_Search.git)
-- `frontend`: [Academic-Info-Frontend](https://github.com/202301-Belle/Academic-Info-Frontend)
+- `frontend`: [Academic-Info-Frontend](https://github.com/202301-Belle/Frontend)
 
 ### 克隆包含子模块的仓库
 
 ```bash
 # 方法1: 克隆时同时初始化并更新所有子模块
-git clone --recursive https://github.com/your-username/Academic-Info-Main.git
+git clone --recursive https://github.com/sihan-shen/Academic-Info-Main.git
 
 # 方法2: 先克隆主仓库，再初始化子模块
-git clone https://github.com/your-username/Academic-Info-Main.git
+git clone https://github.com/sihan-shen/Academic-Info-Main.git
 cd Academic-Info-Main
 git submodule init
 git submodule update

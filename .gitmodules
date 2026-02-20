@@ -3,4 +3,4 @@
 	url = https://github.com/Radiumy/Academic_Search.git
 [submodule "frontend"]
 	path = frontend
-	url = https://github.com/202301-Belle/Academic-Info-Frontend
+	url = https://github.com/202301-Belle/Frontend
