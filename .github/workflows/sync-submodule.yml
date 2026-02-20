@@ -1,0 +1,160 @@
+# .github/workflows/sync-submodule.yml (位于主仓库)
+name: Sync Submodules
+
+# 1. 定义触发条件：监听 repository_dispatch 事件，类型为 submodule_updated
+#    这意味着，当有外部系统（如子模块的 workflow）通过 API 调用这个事件时，本工作流就会启动。
+on:
+  repository_dispatch:
+    types: [submodule_updated]
+  # 也支持手动触发
+  workflow_dispatch:
+    inputs:
+      submodule:
+        description: '指定要更新的子模块 (留空则更新所有)'
+        required: false
+        default: ''
+
+# 防止并发运行导致的冲突
+concurrency:
+  group: sync-submodules
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    # 只有当 payload 中包含特定信息时才执行，或者手动触发时
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'repository_dispatch' && github.event.client_payload.submodule != '')
+    steps:
+      # 打印触发信息
+      - name: Print trigger info
+        run: |
+          echo "Trigger source: ${{ github.event_name }}"
+          echo "Submodule: ${{ github.event.client_payload.submodule || 'all' }}"
+          echo "Commit SHA: ${{ github.event.client_payload.commit_sha || 'N/A' }}"
+
+      # 2. 检出主仓库代码。
+      #    需要使用一个具有写权限的 Personal Access Token (PAT) 来 checkout。
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+        with:
+          # 使用你存储在 Secrets 中的 PAT。这个 Token 需要对主仓库有读写权限。
+          token: ${{ secrets.MAIN_REPO_PAT }}
+          # 重要：检出子模块，但此时检出的还是旧的固定指针。
+          submodules: true
+          # 深度克隆，适合CI场景
+          fetch-depth: 0
+
+      # 3. 更新子模块到最新版本
+      - name: Update submodules to latest
+        id: update
+        run: |
+          # 获取要更新的子模块列表
+          SUBMODULE=${{ github.event.client_payload.submodule || '' }}
+
+          if [ -n "$SUBMODULE" ]; then
+            echo "Updating specific submodule: $SUBMODULE"
+            git submodule update --init --recursive "$SUBMODULE"
+            git submodule update --remote --recursive "$SUBMODULE"
+          else
+            echo "Updating all submodules"
+            git submodule update --init --recursive
+            git submodule update --remote --recursive
+          fi
+
+          # 显示更新后的子模块状态
+          git submodule status
+
+      # 4. 检查是否有更新，如果有，则提交并推送到主仓库
+      - name: Commit and push changes
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 显示变更详情
+          echo "=== Changes before commit ==="
+          git status
+
+          # 添加所有变更，包括子模块指针的变化
+          git add .
+
+          # 检查是否有实际的文件变更
+          if git diff --cached --quiet; then
+            echo "no_changes=true" >> $GITHUB_OUTPUT
+            echo "No submodule updates to commit"
+          else
+            echo "=== Changes to be committed ==="
+            git diff --cached --stat
+            echo "no_changes=false" >> $GITHUB_OUTPUT
+            git commit -m "chore: auto-update submodules from dispatch"
+            echo "commit_done=true" >> $GITHUB_OUTPUT
+          fi
+
+      # 5. 如果有提交，则推送
+      - name: Push changes
+        if: steps.commit.outputs.commit_done == 'true'
+        run: |
+          echo "Pushing changes to remote..."
+          git push
+          echo "Push completed successfully"
+
+      # 6. 清理：同步后删除已跟踪文件的更改
+      - name: Cleanup
+        if: steps.commit.outputs.no_changes == 'true'
+        run: |
+          echo "No changes to commit, workflow completed"
+
+  # 备用任务：当没有指定特定子模块时更新所有
+  sync-all:
+    runs-on: ubuntu-latest
+    # 只有在 repository_dispatch 且未指定子模块时运行
+    if: github.event_name == 'repository_dispatch' && github.event.client_payload.submodule == ''
+    steps:
+      - name: Print trigger info
+        run: |
+          echo "Trigger source: ${{ github.event_name }}"
+          echo "Updating ALL submodules"
+          echo "Commit SHA: ${{ github.event.client_payload.commit_sha || 'N/A' }}"
+
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MAIN_REPO_PAT }}
+          submodules: true
+          fetch-depth: 0
+
+      - name: Update all submodules
+        id: update
+        run: |
+          git submodule update --init --recursive
+          git submodule update --remote --recursive
+          git submodule status
+
+      - name: Commit and push changes
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          echo "=== Changes before commit ==="
+          git status
+
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "no_changes=true" >> $GITHUB_OUTPUT
+            echo "No submodule updates to commit"
+          else
+            echo "=== Changes to be committed ==="
+            git diff --cached --stat
+            echo "no_changes=false" >> $GITHUB_OUTPUT
+            git commit -m "chore: auto-update all submodules from dispatch"
+            echo "commit_done=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push changes
+        if: steps.commit.outputs.commit_done == 'true'
+        run: |
+          echo "Pushing changes to remote..."
+          git push
+          echo "Push completed successfully"
