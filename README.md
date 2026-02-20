@@ -6,6 +6,10 @@
 
 本项目包含子模块，克隆仓库后需要额外步骤来获取子模块内容。
 
+当前包含的子模块：
+- `crawler`: [Academic_Search](https://github.com/Radiumy/Academic_Search.git)
+- `frontend`: [Academic-Info-Frontend](https://github.com/202301-Belle/Academic-Info-Frontend)
+
 ### 克隆包含子模块的仓库
 
 ```bash
