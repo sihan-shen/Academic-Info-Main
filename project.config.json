@@ -46,8 +46,8 @@
     "disableSWC": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.19.4",
-  "appid": "touristappid",
+  "libVersion": "3.14.2",
+  "appid": "wx16d6bd547b382cd6",
   "projectname": "miniprogram-1",
   "isGameTourist": false,
   "condition": {

@@ -3,28 +3,26 @@
   <view class="user-card">
     <view class="user-info-bg">
       <view class="user-main">
-        <image class="avatar" src="/images/tutor-zhang.png"></image> <!-- Placeholder avatar -->
+        <image class="avatar" src="/images/tutor-zhang.png"></image>
         <view class="info-content">
           <view class="name-row">
             <text class="name">学术研究者</text>
-            <view class="edit-btn">
-              <text>编辑</text>
-              <image src="/images/edit-icon.png"></image>
+            <view class="role-tag">
+              <text>硕士研究生</text>
             </view>
           </view>
+          <text class="phone">138****5678</text>
           <view class="vip-tag">
-            <view class="dot"></view>
             <text>未开通会员</text>
           </view>
-          <text class="phone">138****5678</text>
-          <view class="role-tag">
-            <text>硕士研究生</text>
-          </view>
+        </view>
+        <view class="edit-btn">
+            <text>编辑</text>
+            <image src="/images/edit-icon.png"></image>
         </view>
       </view>
       
       <view class="bio">
-        <text class="emoji">💭</text>
         <text class="bio-text">这位学者很懒，什么都没留下~</text>
       </view>
     </view>
