@@ -59,3 +59,82 @@ git submodule deinit -f path/to/submodule
 git rm path/to/submodule
 rm -rf .git/modules/path/to/submodule
 ```
+
+## 自动同步子模块
+
+本项目配置了 GitHub Actions，当子模块有更新时，会自动同步到主仓库。
+
+### 工作原理
+
+1. 子模块仓库的 `main`/`master` 分支有推送时
+2. 子模块的 workflow 触发主仓库的 `repository_dispatch` 事件
+3. 主仓库的 workflow 自动更新子模块指针并提交
+
+### 配置步骤
+
+#### 1. 主仓库配置（我已使用我的Token配置）
+
+在**主仓库** (Academic-Info-Main) 的 Settings → Secrets and variables → Actions 中添加：
+
+| Secret 名称 | 说明 |
+|-------------|------|
+| `MAIN_REPO_PAT` | 具有 repo 权限的 Personal Access Token |
+
+生成 PAT：
+- GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+- 勾选 `repo` 权限
+- 生成后添加到主仓库的 Secrets
+
+#### 2. 子仓库配置
+
+在**子仓库**（如 crawler）的 Settings → Secrets and variables → Actions 中添加：
+
+| Secret 名称 | 说明 |
+|-------------|------|
+| `PARENT_REPO_PAT` | 主仓库的 Personal Access Token（需有主仓库 repo 权限） |
+
+并在子仓库中创建 `.github/workflows/trigger-parent-update.yml`：
+
+```yaml
+name: Trigger Parent Update
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+jobs:
+  notify-parent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger parent repository
+        run: |
+          PARENT_OWNER="sihan-shen"
+          PARENT_REPO="Academic-Info-Main"
+          COMMIT_SHA="${{ github.sha }}"
+
+          curl -X POST \
+            "https://api.github.com/repos/${PARENT_OWNER}/${PARENT_REPO}/dispatches" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.PARENT_REPO_PAT }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "event_type": "submodule_updated",
+              "client_payload": {
+                "submodule": "crawler",
+                "commit_sha": "'"$COMMIT_SHA"'"
+              }
+            }'
+```
+
+#### 3. 手动触发同步
+
+在主仓库的 Actions 页面，选择 "Sync Submodules" workflow，点击 "Run workflow" 可手动触发。
+
+### 注意事项
+
+- 确保 PAT 具有足够的权限（repo 权限）
+- 并发触发会被自动阻止，避免冲突
+- 如果子模块没有实际更新，不会产生提交
