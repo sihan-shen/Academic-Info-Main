@@ -4,3 +4,6 @@
 [submodule "frontend"]
 	path = frontend
 	url = https://github.com/202301-Belle/Frontend.git
+[submodule "backend"]
+	path = backend
+	url = https://github.com/sihan-shen/backend.git
