@@ -33,7 +33,7 @@ jobs:
             -d '{
               "event_type": "submodule_updated",
               "client_payload": {
-                "submodule": "crawler",
+                "submodule": "backend",
                 "commit_sha": "'"$COMMIT_SHA"'"
               }
             }'
