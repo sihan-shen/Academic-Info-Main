@@ -1,4 +1,4 @@
-name: Trigger Parent Update
+name: Trigger Parent Update1
 
 on:
   # 当 master/main 分支有推送时触发
