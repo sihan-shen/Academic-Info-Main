@@ -6,7 +6,7 @@
 	url = https://github.com/202301-Belle/Frontend.git
 [submodule "backend"]
 	path = backend
-	url = https://github.com/cyy-Michael/backend
+	url = https://github.com/cyy-Michael/backend.git
 [submodule "common"]
 	path = common
-	url = https://github.com/cyy-Michael/common
+	url = https://github.com/cyy-Michael/common.git
