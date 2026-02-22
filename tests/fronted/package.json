@@ -1,0 +1,14 @@
+{
+  "name": "frontend-miniprogram-tests",
+  "version": "1.0.0",
+  "description": "微信小程序前端项目结构与功能测试，确保可在微信开发者工具中成功运行",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
