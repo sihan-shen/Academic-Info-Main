@@ -4,9 +4,9 @@
 [submodule "frontend"]
 	path = frontend
 	url = https://github.com/202301-Belle/Frontend.git
-[submodule "backend"]
-	path = backend
-	url = https://github.com/cyy-Michael/backend
 [submodule "common"]
 	path = common
 	url = https://github.com/cyy-Michael/common
+[submodule "backend"]
+	path = backend
+	url = https://github.com/cyy-Michael/backend
