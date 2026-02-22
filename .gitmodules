@@ -9,4 +9,4 @@
 	url = https://github.com/cyy-Michael/common
 [submodule "backend"]
 	path = backend
-	url = https://github.com/cyy-Michael/backend
+	url = https://github.com/cyy-Michael/backend.git
