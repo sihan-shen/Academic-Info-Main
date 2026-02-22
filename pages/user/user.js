@@ -18,6 +18,39 @@ Page({
     });
   },
 
+<<<<<<< HEAD
+=======
+  navigateToEditProfile() {
+    wx.navigateTo({
+      url: '/pages/edit-profile/edit-profile'
+    });
+  },
+
+  navigateToHelp() {
+    wx.navigateTo({
+      url: '/pages/help/help'
+    });
+  },
+
+  navigateToService() {
+    wx.navigateTo({
+      url: '/pages/service/service'
+    });
+  },
+
+  navigateToPrivacy() {
+    wx.navigateTo({
+      url: '/pages/privacy/privacy'
+    });
+  },
+
+  navigateToVip() {
+    wx.navigateTo({
+      url: '/pages/vip/vip'
+    });
+  },
+
+>>>>>>> tww
   navigateToFavorites() {
     wx.navigateTo({
       url: '/pages/favorites/favorites'

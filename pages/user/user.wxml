@@ -1,30 +1,29 @@
 <view class="container">
+<<<<<<< HEAD
   <!-- User Info Card -->
   <view class="user-card">
     <view class="user-info-bg">
       <view class="user-main">
-        <image class="avatar" src="/images/tutor-zhang.png"></image> <!-- Placeholder avatar -->
+        <image class="avatar" src="/images/tutor-zhang.png"></image>
         <view class="info-content">
           <view class="name-row">
             <text class="name">学术研究者</text>
-            <view class="edit-btn">
-              <text>编辑</text>
-              <image src="/images/edit-icon.png"></image>
+            <view class="role-tag">
+              <text>硕士研究生</text>
             </view>
           </view>
+          <text class="phone">138****5678</text>
           <view class="vip-tag">
-            <view class="dot"></view>
             <text>未开通会员</text>
           </view>
-          <text class="phone">138****5678</text>
-          <view class="role-tag">
-            <text>硕士研究生</text>
-          </view>
+        </view>
+        <view class="edit-btn">
+            <text>编辑</text>
+            <image src="/images/edit-icon.png"></image>
         </view>
       </view>
       
       <view class="bio">
-        <text class="emoji">💭</text>
         <text class="bio-text">这位学者很懒，什么都没留下~</text>
       </view>
     </view>
@@ -93,5 +92,104 @@
   <view class="logout-btn" bindtap="onLogout">
     <image src="/images/logout-icon.png"></image>
     <text>退出登录</text>
+=======
+  <!-- Top Blue Background Area -->
+  <view class="header-bg">
+    <!-- Decorative Chevrons -->
+    <view class="deco-chevron deco-1"></view>
+    <view class="deco-chevron deco-2"></view>
+
+    <!-- Edit Button (top-right floating) -->
+    <view class="edit-btn" bindtap="navigateToEditProfile">
+      <text>编辑</text>
+      <view class="edit-arrow"></view>
+    </view>
+
+    <!-- User Info -->
+    <view class="user-info">
+      <image class="avatar" src="/images/tutor-zhang.png"></image>
+      <view class="info-content">
+        <text class="name">学术研究者</text>
+        <view class="vip-badge">
+          <view class="badge-dot"></view>
+          <text>未开通会员</text>
+        </view>
+        <text class="phone">138****5678</text>
+        <view class="role-badge">
+          <view class="badge-dot"></view>
+          <text>硕士研究生</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Bio -->
+    <view class="bio-box">
+      <text class="bio-emoji">💭</text>
+      <text class="bio-text">这位学者很懒，什么都没留下~</text>
+    </view>
+  </view>
+
+  <!-- VIP Card (overlapping header) -->
+  <view class="vip-card" bindtap="navigateToVip">
+    <view class="vip-top">
+      <view class="star-icon">★</view>
+      <text class="vip-title">升级会员，解锁全部功能</text>
+    </view>
+
+    <view class="vip-features">
+      <view class="vip-feat">
+        <view class="feat-circle">
+          <image src="/images/search-icon.png"></image>
+        </view>
+        <text>专属导师查询</text>
+      </view>
+      <view class="vip-feat">
+        <view class="feat-circle">
+          <image src="/images/search-icon.png"></image>
+        </view>
+        <text>加速智能匹配</text>
+      </view>
+      <view class="vip-feat" bindtap="navigateToFavorites">
+        <view class="feat-circle">
+          <image src="/images/fav-icon.png"></image>
+        </view>
+        <text>更多收藏位置</text>
+      </view>
+    </view>
+
+    <view class="vip-btn">
+      <text>每天低至1元，立即开通</text>
+    </view>
+  </view>
+
+  <!-- Horizontal Menu Row -->
+  <view class="menu-row">
+    <view class="menu-item" bindtap="navigateToHelp">
+      <image class="menu-icon" src="/images/help-icon.png"></image>
+      <text class="menu-text">帮助中心</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="navigateToService">
+      <image class="menu-icon" src="/images/service-icon.png"></image>
+      <text class="menu-text">客服中心</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="navigateToPrivacy">
+      <image class="menu-icon" src="/images/privacy-icon.png"></image>
+      <text class="menu-text">隐私设置</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
+
+  <!-- Spacer pushes logout to bottom -->
+  <view class="spacer"></view>
+
+  <!-- Logout -->
+  <view class="logout-wrap">
+    <view class="logout-btn" bindtap="onLogout">
+      <image src="/images/logout-icon.png"></image>
+      <text>退出登录</text>
+    </view>
+>>>>>>> tww
   </view>
 </view>

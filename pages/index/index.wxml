@@ -58,9 +58,9 @@
   </view>
 
   <!-- Action Sheet Mask -->
-  <view class="action-sheet-mask {{showActionSheet ? 'show' : ''}}" bindtap="closeActionSheet"></view>
+  <view class="action-sheet-mask {{showActionSheet || showCoopSheet ? 'show' : ''}}" bindtap="closeAllSheets"></view>
   
-  <!-- Action Sheet -->
+  <!-- 查导师 Action Sheet -->
   <view class="action-sheet {{showActionSheet ? 'show' : ''}}">
     <view class="sheet-header">
       <text class="sheet-title">查导师</text>
@@ -86,6 +86,38 @@
         <view class="sheet-info">
           <text class="sheet-item-title">院校导师库</text>
           <text class="sheet-item-desc">按院校浏览导师资源</text>
+        </view>
+        <image class="arrow-right" src="/images/arrow-right.png"></image>
+      </view>
+    </view>
+  </view>
+
+  <!-- 查合作 Action Sheet -->
+  <view class="action-sheet {{showCoopSheet ? 'show' : ''}}">
+    <view class="sheet-header">
+      <text class="sheet-title">查合作</text>
+      <view class="close-btn" bindtap="closeAllSheets">
+        <text class="close-x">✕</text>
+      </view>
+    </view>
+    <view class="sheet-content">
+      <view class="sheet-item" bindtap="navigateToResearchMatch">
+        <view class="sheet-icon-box blue">
+          <text class="sheet-icon-text">👥</text>
+        </view>
+        <view class="sheet-info">
+          <text class="sheet-item-title">研究领域匹配</text>
+          <text class="sheet-item-desc">智能匹配研究方向</text>
+        </view>
+        <image class="arrow-right" src="/images/arrow-right.png"></image>
+      </view>
+      <view class="sheet-item" bindtap="navigateToCoopMining">
+        <view class="sheet-icon-box blue">
+          <text class="sheet-icon-text">🔗</text>
+        </view>
+        <view class="sheet-info">
+          <text class="sheet-item-title">学术合作挖掘</text>
+          <text class="sheet-item-desc">发现潜在合作机会</text>
         </view>
         <image class="arrow-right" src="/images/arrow-right.png"></image>
       </view>

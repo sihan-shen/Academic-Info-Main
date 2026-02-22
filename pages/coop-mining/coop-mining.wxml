@@ -1,0 +1,92 @@
+<view class="page">
+  <!-- 合作数据概览 -->
+  <view class="section-label">合作数据概览</view>
+  <view class="stat-row">
+    <view class="stat-card">
+      <view class="stat-icon green">
+        <text>🔗</text>
+      </view>
+      <view class="stat-text">
+        <text class="stat-sub">活跃合作领域\nTOP3</text>
+      </view>
+      <view class="stat-value-text">AI、大数据、物联网</view>
+    </view>
+    <view class="stat-card">
+      <view class="stat-top-row">
+        <view class="stat-icon blue">
+          <text>🤝</text>
+        </view>
+        <view class="stat-text">
+          <text class="stat-sub">潜在合作机会</text>
+        </view>
+        <text class="stat-arrow">›</text>
+      </view>
+      <view class="stat-num">24<text class="stat-unit">个</text></view>
+    </view>
+  </view>
+
+  <!-- 为您推荐的合作机会 -->
+  <view class="section-label">为您推荐的合作机会</view>
+
+  <view class="coop-card" wx:for="{{coopList}}" wx:key="id">
+    <view class="coop-header">
+      <text class="coop-title">{{item.title}}</text>
+      <view class="coop-tags">
+        <text class="coop-tag" wx:for="{{item.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
+      </view>
+    </view>
+    <view class="coop-desc">{{item.desc}}</view>
+    <view class="coop-achievement">
+      <text class="achieve-label">过往成果：</text>{{item.achievement}}
+    </view>
+    <view class="coop-team-label">核心团队成员</view>
+    <view class="coop-members">
+      <view class="member-item" wx:for="{{item.members}}" wx:for-item="m" wx:key="name">
+        <view class="member-avatar">
+          <text>{{m.initial}}</text>
+        </view>
+        <text class="member-name">{{m.name}}（{{m.school}}）</text>
+      </view>
+    </view>
+    <view class="coop-actions">
+      <view class="btn-detail">查看合作详情</view>
+      <view class="btn-apply">发起合作申请</view>
+    </view>
+  </view>
+
+  <!-- 学术合作关系图谱 -->
+  <view class="section-label">学术合作关系图谱</view>
+  <view class="graph-card">
+    <view class="graph-zoom">
+      <text>🔍</text>
+    </view>
+    <view class="graph-area">
+      <view class="node node-a" style="left:60rpx;top:40rpx;">
+        <view class="node-dot dot-blue"></view>
+        <text class="node-label">导师A</text>
+      </view>
+      <view class="node node-b" style="right:80rpx;top:30rpx;">
+        <view class="node-dot dot-orange"></view>
+        <text class="node-label">导师B</text>
+      </view>
+      <view class="node node-center" style="left:50%;top:50%;transform:translate(-50%,-50%);">
+        <view class="node-dot dot-blue-lg"></view>
+        <text class="node-label-center">您</text>
+      </view>
+      <view class="node node-c" style="left:50rpx;bottom:50rpx;">
+        <view class="node-dot dot-green"></view>
+        <text class="node-label">团队C</text>
+      </view>
+      <view class="node node-d" style="right:70rpx;bottom:50rpx;">
+        <view class="node-dot dot-red"></view>
+        <text class="node-label">机构D</text>
+      </view>
+      <!-- 连线用 canvas 模拟 -->
+      <canvas canvas-id="graphCanvas" class="graph-canvas"></canvas>
+    </view>
+    <view class="graph-hint">点击节点查看详情，支持缩放查看</view>
+  </view>
+
+  <!-- 发布合作需求 -->
+  <view class="publish-btn" bindtap="onPublish">+ 发布合作需求</view>
+</view>

@@ -285,3 +285,12 @@
   height: 40rpx;
   opacity: 0.3;
 }
+
+.sheet-icon-text {
+  font-size: 40rpx;
+}
+
+.close-x {
+  font-size: 28rpx;
+  color: #6a7282;
+}

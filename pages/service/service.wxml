@@ -1,0 +1,73 @@
+<view class="page">
+  <!-- Chat Area -->
+  <scroll-view class="chat-area" scroll-y scroll-into-view="{{scrollToView}}" enhanced show-scrollbar="{{false}}">
+    <!-- Date Label -->
+    <view class="date-label">
+      <text>今天 10:30</text>
+    </view>
+
+    <!-- Messages -->
+    <block wx:for="{{messages}}" wx:key="index">
+      <!-- Bot Message -->
+      <view wx:if="{{item.type === 'bot'}}" class="msg-row msg-left" id="msg-{{index}}">
+        <view class="bot-avatar">
+          <text class="bot-avatar-ico">🤖</text>
+        </view>
+        <view class="msg-content-wrap">
+          <view class="bubble bubble-left">
+            <text>{{item.text}}</text>
+          </view>
+          <text class="msg-time">{{item.time}}</text>
+        </view>
+      </view>
+
+      <!-- User Message -->
+      <view wx:if="{{item.type === 'user'}}" class="msg-row msg-right" id="msg-{{index}}">
+        <view class="msg-content-wrap msg-content-right">
+          <view class="bubble bubble-right">
+            <text>{{item.text}}</text>
+          </view>
+          <text class="msg-time msg-time-right">{{item.time}}</text>
+        </view>
+        <view class="user-avatar">
+          <text class="user-avatar-ico">👤</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- Quick Questions (show only at beginning) -->
+    <view class="quick-section" wx:if="{{showQuick}}">
+      <view class="quick-title">
+        <text>💡 快捷问题</text>
+      </view>
+      <view class="quick-grid">
+        <view class="quick-btn" wx:for="{{quickQuestions}}" wx:key="index" bindtap="onQuickTap" data-q="{{item}}">
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="chat-bottom-pad"></view>
+  </scroll-view>
+
+  <!-- Input Area -->
+  <view class="input-area">
+    <view class="input-row">
+      <input class="msg-input" placeholder="输入您的问题..." placeholder-class="input-placeholder" value="{{inputValue}}" bindinput="onInput" bindconfirm="onSend" confirm-type="send" />
+      <view class="send-btn" bindtap="onSend">
+        <text class="send-ico">➤</text>
+      </view>
+    </view>
+    <view class="action-row">
+      <view class="action-btn action-btn-online">
+        <text class="action-ico">💬</text>
+        <text>联系在线客服</text>
+      </view>
+      <view class="action-btn action-btn-phone">
+        <text class="action-ico">📞</text>
+        <text>联系电话客服</text>
+      </view>
+    </view>
+    <text class="service-hours">服务时间：周一至周日 9:00-21:00</text>
+  </view>
+</view>

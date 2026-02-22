@@ -6,7 +6,14 @@
     "pages/tutor-detail/tutor-detail",
     "pages/user/user",
     "pages/favorites/favorites",
-    "pages/tutor-library/tutor-library"
+    "pages/tutor-library/tutor-library",
+    "pages/edit-profile/edit-profile",
+    "pages/vip/vip",
+    "pages/help/help",
+    "pages/service/service",
+    "pages/privacy/privacy",
+    "pages/research-match/research-match",
+    "pages/coop-mining/coop-mining"
   ],
   "window": {
     "backgroundTextStyle": "light",

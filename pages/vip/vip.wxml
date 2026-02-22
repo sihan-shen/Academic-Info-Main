@@ -1,0 +1,135 @@
+<view class="page">
+  <!-- Section 1: Current Status -->
+  <view class="status-card">
+    <view class="status-top">
+      <view class="status-left">
+        <view class="status-icon">☆</view>
+        <view class="status-label">
+          <text class="status-title">当前状态</text>
+          <text class="status-sub">Current Status</text>
+        </view>
+      </view>
+      <view class="status-badge">
+        <text>未开通会员</text>
+      </view>
+    </view>
+    <text class="status-desc">您当前为非会员用户，开通会员即可享受平台全部功能和专属特权。</text>
+  </view>
+
+  <!-- Section 2: Basic Member -->
+  <view class="member-card">
+    <view class="member-header">
+      <view class="member-left">
+        <view class="member-icon">☆</view>
+        <view class="member-label">
+          <text class="member-title">基础会员</text>
+          <text class="member-sub">Basic Member</text>
+        </view>
+      </view>
+      <view class="member-price">
+        <text class="price-tag">限时优惠</text>
+        <view class="price-row">
+          <text class="price-symbol">¥</text>
+          <text class="price-num">99</text>
+          <text class="price-unit">/月</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="member-body">
+    <view class="feature-list">
+      <view class="feature-row">
+        <view class="feat-ico feat-ico-search">🔍</view>
+        <text>无限次导师信息查询</text>
+      </view>
+      <view class="feature-row">
+        <view class="feat-ico feat-ico-check">✓</view>
+        <text>导师信息详细展示</text>
+      </view>
+      <view class="feature-row">
+        <view class="feat-ico feat-ico-check">✓</view>
+        <text>标准搜索功能</text>
+      </view>
+      <view class="feature-row">
+        <view class="feat-ico feat-ico-check">✓</view>
+        <text>基础数据导出</text>
+      </view>
+    </view>
+
+    <view class="buy-btn" bindtap="onBuyBasic">
+      <text>立即开通基础会员</text>
+    </view>
+    </view>
+  </view>
+
+  <!-- Section 3: Free Trial Credits -->
+  <view class="trial-card">
+    <view class="trial-tag-wrap">
+      <view class="trial-tag">
+        <text>🎁 新用户专享</text>
+      </view>
+    </view>
+
+    <view class="trial-title-row">
+      <text class="trial-title">🎉 免费试用额度</text>
+    </view>
+    <text class="trial-desc">新用户注册即可获得免费试用额度</text>
+
+    <view class="trial-icons-panel">
+      <view class="trial-icons">
+        <view class="trial-icon-item">
+          <view class="trial-icon-circle trial-ico-orange">
+            <text class="trial-icon-emoji">📅</text>
+          </view>
+          <text class="trial-icon-label">每日签到</text>
+        </view>
+        <text class="trial-arrow-text">→</text>
+        <view class="trial-icon-item">
+          <view class="trial-icon-circle trial-ico-purple">
+            <text class="trial-icon-emoji">🎁</text>
+          </view>
+          <text class="trial-icon-label">领取额度</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="trial-features">
+      <view class="trial-feat-row">
+        <text class="check-green">✓</text>
+        <text>新用户注册送 </text>
+        <text class="highlight">100次</text>
+        <text> 查询额度</text>
+      </view>
+      <view class="trial-feat-row">
+        <text class="check-green">✓</text>
+        <text>每日登录可领 </text>
+        <text class="highlight">10次</text>
+        <text> 免费额度</text>
+      </view>
+      <view class="trial-feat-row">
+        <text class="check-green">✓</text>
+        <text>连续签到7天额外送 </text>
+        <text class="highlight">50次</text>
+      </view>
+    </view>
+
+    <view class="trial-btn" bindtap="onClaimTrial">
+      <text>立即领取免费额度 🎁</text>
+    </view>
+  </view>
+
+  <!-- Section 4: Service Description -->
+  <view class="service-card">
+    <view class="service-title-row">
+      <text class="service-icon">📋</text>
+      <text class="service-title">服务说明</text>
+    </view>
+    <view class="service-list">
+      <text class="service-item">· 会员服务自开通之日起生效，有效期为30天（自然月）</text>
+      <text class="service-item">· 会员到期后自动失效，不会自动续费</text>
+      <text class="service-item">· 会员权益仅限本账号使用，不可转让</text>
+      <text class="service-item">· 具体权益以实际开通时页面展示为准</text>
+      <text class="service-item">· 如有疑问，请联系客服服务热线：400-888-8888</text>
+    </view>
+  </view>
+</view>

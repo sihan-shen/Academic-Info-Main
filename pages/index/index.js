@@ -2,6 +2,7 @@
 Page({
   data: {
     showActionSheet: false,
+    showCoopSheet: false,
     newsList: [
       {
         id: 1,
@@ -52,6 +53,10 @@ Page({
     this.setData({ showActionSheet: false });
   },
 
+  closeAllSheets() {
+    this.setData({ showActionSheet: false, showCoopSheet: false });
+  },
+
   navigateToSearch() {
     this.closeActionSheet();
     wx.navigateTo({
@@ -67,9 +72,20 @@ Page({
   },
 
   navigateToCoop() {
-    wx.showToast({
-      title: '功能开发中',
-      icon: 'none'
+    this.setData({ showCoopSheet: true });
+  },
+
+  navigateToResearchMatch() {
+    this.closeAllSheets();
+    wx.navigateTo({
+      url: '/pages/research-match/research-match'
+    });
+  },
+
+  navigateToCoopMining() {
+    this.closeAllSheets();
+    wx.navigateTo({
+      url: '/pages/coop-mining/coop-mining'
     });
   },
 
