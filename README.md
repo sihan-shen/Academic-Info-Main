@@ -9,7 +9,8 @@
 当前包含的子模块：
 - `crawler`: [Academic_Search](https://github.com/Radiumy/Academic_Search.git)
 - `frontend`: [Academic-Info-Frontend](https://github.com/202301-Belle/Frontend)
-
+- `common`
+- `backend`
 ### 克隆包含子模块的仓库
 
 ```bash
