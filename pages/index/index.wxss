@@ -305,6 +305,10 @@ page {
   position: relative;
 }
 
+.sheet-icon-box.blue {
+  background: #2b7fff;
+}
+
 .sheet-icon-box.purple {
   background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
 }

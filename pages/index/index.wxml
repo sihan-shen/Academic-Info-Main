@@ -110,7 +110,7 @@
     </view>
     <view class="sheet-content">
       <view class="sheet-item" bindtap="navigateToResearchMatch">
-        <view class="sheet-icon-box purple">
+        <view class="sheet-icon-box blue">
           <view class="icon-research">
             <view class="research-node top"></view>
             <view class="research-line"></view>
@@ -127,7 +127,7 @@
         <image class="arrow-right" src="/images/arrow-right.png" mode="aspectFit"></image>
       </view>
       <view class="sheet-item" bindtap="navigateToCoopMining">
-        <view class="sheet-icon-box blue-gradient">
+        <view class="sheet-icon-box blue">
           <view class="icon-coop">
             <view class="person-left">
               <view class="person-head"></view>

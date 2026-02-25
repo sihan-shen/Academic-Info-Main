@@ -232,7 +232,7 @@ page {
 
 /* ===== Section 3: Trial Card ===== */
 .trial-card {
-  background: linear-gradient(180deg, #f5a623 0%, #ff8c42 50%, #e67e22 100%);
+  background: linear-gradient(180deg, #f5d998 0%, #e8c472 50%, #d4a84a 100%);
   border-radius: 24rpx;
   padding: 36rpx 32rpx 0;
   margin-bottom: 24rpx;
@@ -248,7 +248,7 @@ page {
   left: 0;
   right: 0;
   height: 8rpx;
-  background: linear-gradient(90deg, #ff8c42, #f39c12, #e67e22);
+  background: #d4a84a;
 }
 
 .trial-tag-wrap {
@@ -319,13 +319,13 @@ page {
 }
 
 .trial-ico-orange {
-  background: linear-gradient(135deg, #ffd700 0%, #ffb84d 100%);
-  box-shadow: 0 4rpx 12rpx rgba(255, 215, 0, 0.3);
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
 }
 
 .trial-ico-purple {
-  background: linear-gradient(135deg, #ffb84d 0%, #ff9500 100%);
-  box-shadow: 0 4rpx 12rpx rgba(255, 184, 77, 0.3);
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
 }
 
 .trial-icon-emoji {
@@ -374,7 +374,7 @@ page {
 
 /* Trial Button */
 .trial-btn {
-  background: linear-gradient(90deg, #ff8c42, #e84393);
+  background: #c9913a;
   border-radius: 44rpx;
   padding: 26rpx 0;
   text-align: center;
