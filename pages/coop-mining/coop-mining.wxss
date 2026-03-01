@@ -196,27 +196,12 @@
   text-align: center;
   padding: 18rpx 0;
   border-radius: 40rpx;
-  border: 2rpx solid #d0d8e4;
-  font-size: 26rpx;
-  color: #555;
-  background: #fff;
-}
-
-.btn-apply {
-  flex: 1;
-  text-align: center;
-  padding: 18rpx 0;
-  border-radius: 40rpx;
   font-size: 26rpx;
   color: #fff;
   background: #3468b5;
 }
 
 .btn-detail:active {
-  background: #f5f5f5;
-}
-
-.btn-apply:active {
   opacity: 0.85;
 }
 
@@ -314,19 +299,3 @@
   margin-top: 16rpx;
 }
 
-/* ========== 发布按钮 ========== */
-.publish-btn {
-  text-align: center;
-  padding: 24rpx 0;
-  border-radius: 48rpx;
-  font-size: 30rpx;
-  font-weight: bold;
-  color: #3468b5;
-  background: #fff;
-  border: 2rpx solid #3468b5;
-  margin: 0 24rpx 40rpx;
-}
-
-.publish-btn:active {
-  background: #e8f0fe;
-}

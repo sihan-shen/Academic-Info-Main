@@ -1,6 +1,8 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/smart-analysis/smart-analysis",
+    "pages/interest-selection/interest-selection",
     "pages/login/login",
     "pages/search/search",
     "pages/search-simple/search-simple",
@@ -15,6 +17,7 @@
     "pages/privacy/privacy",
     "pages/permission-guide/permission-guide",
     "pages/research-match/research-match",
+    "pages/coop-search/coop-search",
     "pages/coop-mining/coop-mining",
     "pages/coop-opportunities/coop-opportunities",
     "pages/coop-detail/coop-detail"
@@ -41,14 +44,8 @@
         "selectedIconPath": "images/home-active.png"
       },
       {
-        "pagePath": "pages/coop-mining/coop-mining",
-        "text": "社工模型",
-        "iconPath": "images/search.png",
-        "selectedIconPath": "images/coop-icon-new.png"
-      },
-      {
-        "pagePath": "pages/research-match/research-match",
-        "text": "智能推导师",
+        "pagePath": "pages/smart-analysis/smart-analysis",
+        "text": "智能分析",
         "iconPath": "images/search.png",
         "selectedIconPath": "images/search-active.png"
       },

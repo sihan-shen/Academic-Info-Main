@@ -1,0 +1,45 @@
+<view class="container">
+  
+  <!-- 搜索发现 (隐藏) -->
+  <view class="search-initial" wx:if="{{false}}">
+    <!-- 顶部搜索栏 -->
+    <view class="search-header-bar">
+      <view class="search-input-wrapper">
+        <icon type="search" size="16" color="#999" class="search-icon-small"/>
+        <input class="search-input-field" 
+               placeholder="请输入合作方向、关键词" 
+               placeholder-class="placeholder-style"
+               confirm-type="search"
+               bindconfirm="onSearchConfirm"
+               focus="true"
+        />
+      </view>
+      <view class="search-btn" bindtap="onSearchConfirm">搜索</view>
+    </view>
+  </view>
+
+  <!-- 筛选面板 (默认显示) -->
+  <view class="filter-container" wx:if="{{searchMode === 'filter'}}">
+    <scroll-view scroll-y="true" class="more-scroll">
+      <view class="filter-section" wx:for="{{filterData.groups}}" wx:key="key" wx:for-index="gIdx" wx:for-item="group">
+        <view class="section-title">{{group.title}}</view>
+        <view class="section-options">
+          <view class="option-chip {{opt.selected ? 'selected' : ''}}" 
+                wx:for="{{group.options}}" wx:key="value" wx:for-item="opt" wx:for-index="oIdx"
+                bindtap="selectGroupOption" data-group-index="{{gIdx}}" data-option-index="{{oIdx}}">
+            {{opt.label}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 个人简历上传 (已删除) -->
+    </scroll-view>
+    
+    <!-- 底部固定栏: Count + 确定按钮 -->
+    <view class="bottom-bar">
+      <view class="count-info">共 {{totalCount}} 个合作项目符合条件</view>
+      <view class="btn-confirm" bindtap="confirmFilter">查看</view>
+    </view>
+  </view>
+
+</view>

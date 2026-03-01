@@ -113,20 +113,10 @@ Page({
 
       // 4. 跳转逻辑
       setTimeout(() => {
-        const targetUrl = this.redirectUrl || '/pages/index/index';
-        
-        // 简单判断是否需要 switchTab (首页通常是 tab)
-        if (targetUrl.indexOf('/pages/index/index') !== -1 || targetUrl.indexOf('/pages/user/user') !== -1) {
-          wx.switchTab({ url: targetUrl });
-        } else {
-          wx.redirectTo({ 
-            url: targetUrl,
-            fail: () => {
-              // 如果跳转失败（比如目标也是tabBar页面但没判断出来），降级回首页
-              wx.switchTab({ url: '/pages/index/index' });
-            }
-          });
-        }
+        // 直接跳转到兴趣选择页面
+        wx.reLaunch({
+          url: '/pages/interest-selection/interest-selection'
+        });
       }, 1000);
 
     } catch (error) {

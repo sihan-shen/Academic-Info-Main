@@ -1,7 +1,7 @@
 /** pages/tutor-detail/tutor-detail.wxss */
 .container {
   background-color: #f5f7fa;
-  height: 100vh;
+  min-height: 100vh; /* Changed from height to min-height to allow full scrolling */
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -12,10 +12,12 @@
 .tutor-header {
   background: white;
   padding: 30rpx 24rpx;
-  margin-bottom: 16rpx;
+  margin-bottom: 0; /* Removed margin to connect with gradients if needed, or keep separate */
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.02);
   width: 100%;
   box-sizing: border-box;
+  z-index: 10;
+  position: relative;
 }
 
 .header-top {
@@ -96,6 +98,49 @@
 }
 
 /* Tabs */
+.tabs-sticky-wrapper {
+  background: white;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+  width: 100%;
+  height: 90rpx; /* Fixed height to prevent layout shift */
+  z-index: 15;
+}
+
+.tabs-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+.tabs-placeholder {
+  width: 100%;
+  background: transparent;
+}
+
+.main-scroll {
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.bottom-spacer {
+  height: 300rpx; /* Increased spacer to ensure bottom content is visible */
+  width: 100%;
+  background: transparent; 
+}
+
+.content-body {
+  padding-bottom: 0;
+  background: #f5f7fa;
+}
+
 .tabs-scroll {
   background: white;
   white-space: nowrap;
@@ -141,21 +186,44 @@
 }
 
 /* Content */
-.content-scroll {
+.content-body {
   flex: 1;
   box-sizing: border-box;
 }
 
 .content-section {
-  padding: 24rpx 24rpx 120rpx; /* Bottom padding for fixed footer */
+  padding: 40rpx 24rpx; /* Balanced padding */
+  /* background will be set via helper classes */
+}
+
+/* Alternating Background Gradients - Removed for solid color boxes */
+.section-odd {
+  background: transparent;
+}
+
+.section-even {
+  background: transparent;
 }
 
 .section-container {
-  background: white;
+  /* background: white;  Removed default white to allow alternating */
   border-radius: 16rpx;
   padding: 30rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.02);
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.03);
+}
+
+/* Alternating Box Colors */
+.section-odd .section-container {
+  background-color: #ffffff;
+}
+
+.section-even .section-container {
+  background-color: #e6f4ff;
+}
+
+.section-container:last-child {
+  margin-bottom: 0;
 }
 
 .section-header {
@@ -409,4 +477,169 @@
   font-size: 30rpx;
   font-weight: 500;
   box-shadow: 0 8rpx 20rpx rgba(43, 127, 255, 0.3);
+}
+
+/* Graph Styles */
+.graph-box {
+  width: 100%;
+  background: #1a2a4a;
+  border-radius: 12rpx;
+  padding: 30rpx;
+  box-sizing: border-box;
+  color: white;
+}
+
+.graph-content {
+  position: relative;
+  height: 360rpx;
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.graph-caption {
+  text-align: center;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 20rpx;
+}
+
+.graph-node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.node-circle {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  margin-bottom: 8rpx;
+}
+
+.node-label {
+  font-size: 22rpx;
+  color: white;
+}
+
+.circle-you {
+  background-color: #4b89ff;
+  width: 70rpx;
+  height: 70rpx;
+  box-shadow: 0 0 15rpx rgba(75, 137, 255, 0.4);
+}
+
+.circle-blue {
+  background-color: #5c8ae6;
+}
+
+.circle-orange {
+  background-color: #fca43d;
+}
+
+.circle-green {
+  background-color: #43b359;
+}
+
+.circle-red {
+  background-color: #f26868;
+}
+
+/* Positioning */
+.node-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.node-tl {
+  top: 10%;
+  left: 10%;
+}
+
+.node-tr {
+  top: 10%;
+  right: 10%;
+}
+
+.node-bl {
+  bottom: 10%;
+  left: 10%;
+}
+
+.node-br {
+  bottom: 10%;
+  right: 10%;
+}
+
+/* Connecting Lines */
+.graph-line {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.2);
+  height: 2rpx;
+  transform-origin: 0 50%;
+  z-index: 1;
+}
+
+/* Simplified lines using manual rotation/positioning for this specific layout */
+/* These values are approximations to connect center to corners */
+.line-tl {
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  transform: rotate(215deg);
+}
+
+.line-tr {
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  transform: rotate(325deg);
+}
+
+.line-bl {
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  transform: rotate(145deg);
+}
+
+.line-br {
+  top: 50%;
+  left: 50%;
+  width: 40%;
+  transform: rotate(35deg);
+}
+
+/* Decorative Search Icon */
+.graph-icon-search {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  width: 40rpx;
+  height: 40rpx;
+  opacity: 0.8;
+}
+
+.search-glass {
+  width: 24rpx;
+  height: 24rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.search-glass::after {
+  content: '';
+  position: absolute;
+  bottom: -8rpx;
+  right: -8rpx;
+  width: 10rpx;
+  height: 4rpx;
+  background: rgba(255, 255, 255, 0.5);
+  transform: rotate(45deg);
 }

@@ -1,0 +1,229 @@
+/** pages/coop-search/coop-search.wxss */
+/* Original styles from pages/search/search.wxss */
+.container {
+  background-color: #f9fafb;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: relative;
+}
+
+/* 搜索初始页样式 */
+.search-initial {
+  flex: 1;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-header-bar {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  background: linear-gradient(180deg, #e6f7ff 0%, #ffffff 100%);
+}
+
+.search-input-wrapper {
+  flex: 1;
+  height: 72rpx;
+  background: #f5f5f5;
+  border-radius: 36rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+  margin-right: 20rpx;
+}
+
+.search-icon-small {
+  margin-right: 12rpx;
+}
+
+.search-input-field {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.placeholder-style {
+  color: #999;
+}
+
+.search-btn {
+  font-size: 30rpx;
+  color: #007aff;
+  font-weight: bold;
+}
+
+/* 筛选容器 (全屏) */
+.filter-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: white;
+  position: relative;
+}
+
+.more-scroll {
+  flex: 1;
+  padding: 30rpx;
+  box-sizing: border-box;
+  overflow-y: auto;
+  /* 留出底部 bottom-bar 的空间 */
+  padding-bottom: 120rpx; 
+}
+
+.filter-section {
+  margin-bottom: 40rpx;
+}
+
+.section-title {
+  text-align: left;
+  font-weight: bold;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.section-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.option-chip {
+  background: #f5f5f5;
+  padding: 12rpx 24rpx;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #333;
+  border: 1rpx solid transparent;
+  transition: all 0.2s ease;
+}
+
+.option-chip.selected {
+  background: #007aff; /* 品牌主色 */
+  color: #ffffff; 
+  font-weight: bold;
+  border: 1rpx solid #007aff;
+}
+
+/* 底部固定栏 (筛选模式) */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100rpx;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx;
+  box-sizing: border-box;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  z-index: 100;
+}
+
+.count-info {
+  font-size: 28rpx;
+  color: #007aff;
+  font-weight: bold;
+}
+
+.btn-confirm {
+  background: #007aff;
+  color: white;
+  padding: 16rpx 48rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+/* 小屏适配 */
+@media screen and (max-width: 320px) {
+  .option-chip {
+    font-size: 24rpx;
+    padding: 8rpx 16rpx;
+  }
+}
+
+/* 简历上传样式 */
+.upload-area {
+  margin-top: 10rpx;
+}
+
+.upload-btn {
+  background: #f9f9f9;
+  border: 2rpx dashed #d9d9d9;
+  border-radius: 12rpx;
+  height: 120rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 24rpx;
+}
+
+.upload-btn:active {
+  background: #f0f0f0;
+}
+
+.plus-icon {
+  font-size: 40rpx;
+  color: #ccc;
+  margin-bottom: 4rpx;
+  line-height: 1;
+}
+
+.upload-text {
+  color: #666;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  background: #f0f7ff;
+  border: 1rpx solid #bae0ff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  position: relative;
+}
+
+.file-icon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-right: 20rpx;
+  /* simple placeholder for file icon */
+  background: #ffec3d; /* yellow for folder/file */
+  border-radius: 8rpx;
+}
+
+.file-name {
+  flex: 1;
+  font-size: 26rpx;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.delete-btn {
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 36rpx;
+  text-align: center;
+  color: #999;
+  font-size: 32rpx;
+  background: rgba(0,0,0,0.05);
+  border-radius: 50%;
+  margin-left: 20rpx;
+}
+
+.delete-btn:active {
+  background: rgba(0,0,0,0.1);
+  color: #666;
+}

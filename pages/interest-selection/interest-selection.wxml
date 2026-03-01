@@ -1,0 +1,44 @@
+<wxs src="./utils.wxs" module="utils" />
+
+<view class="container">
+  <!-- Removed page title as requested -->
+  
+  <view class="filter-wrapper">
+    <!-- Subject Area Section (Filter) -->
+    <view class="section-title">学科领域</view>
+    <view class="tags-wrapper subjects">
+      <block wx:for="{{subjects}}" wx:key="*this">
+        <view class="tag subject-tag {{currentSubject === item ? 'selected' : ''}}" 
+              bindtap="selectSubject" 
+              data-subject="{{item}}">
+          {{item}}
+        </view>
+      </block>
+    </view>
+    
+    <!-- Interested Directions Section (Selectable Tags) -->
+    <view class="section-title">感兴趣的方向</view>
+    <scroll-view scroll-y="true" class="directions-scroll">
+      <view class="tags-wrapper directions">
+         <block wx:for="{{displayedDirections}}" wx:key="*this">
+            <view class="tag direction-tag {{utils.isTagSelected(selectedTags, item) ? 'selected' : ''}}" 
+                  bindtap="toggleTag" 
+                  data-tag="{{item}}">
+              {{item}}
+            </view>
+         </block>
+      </view>
+      <!-- Padding for bottom bar -->
+      <view style="height: 120rpx;"></view>
+    </scroll-view>
+  </view>
+
+  <!-- Bottom Bar -->
+  <view class="footer-bar">
+    <view class="match-info">
+      <text wx:if="{{selectedCount > 0}}">已选择 {{selectedCount}} 个标签</text>
+      <text wx:else>请选择感兴趣的标签（最多{{maxSelection}}个）</text>
+    </view>
+    <button class="confirm-btn" bindtap="confirmSelection">确定</button>
+  </view>
+</view>

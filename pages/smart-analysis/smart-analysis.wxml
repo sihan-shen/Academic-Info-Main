@@ -1,0 +1,71 @@
+<view class="container">
+  <view class="header">
+    <text class="title">智能分析工具</text>
+    <text class="subtitle">上传简历，智能匹配最佳导师与合作机会</text>
+  </view>
+
+  <!-- Upload CV Section -->
+  <view class="upload-section">
+    <view class="upload-card" bindtap="handleUpload" wx:if="{{!hasAnalyzed}}">
+      <view class="upload-icon-box">
+        <image class="upload-icon" src="/images/edit-icon.png" mode="aspectFit"></image>
+      </view>
+      <text class="upload-title">点击上传简历 (PDF/Word)</text>
+      <text class="upload-desc">智能提取关键信息，精准匹配导师</text>
+    </view>
+
+    <!-- Analysis Result Section -->
+    <view class="analysis-result" wx:else>
+      <view class="result-header">
+        <text class="result-title">智能分析完成</text>
+        <view class="re-upload-btn" bindtap="handleUpload">重新上传</view>
+      </view>
+      
+      <view class="tags-group">
+        <view class="group-label">研究方向</view>
+        <view class="tags-list">
+          <block wx:for="{{analyzedTags.research}}" wx:key="*this">
+            <view class="tag blue">{{item}}</view>
+          </block>
+        </view>
+      </view>
+
+      <view class="tags-group">
+        <view class="group-label">学术背景</view>
+        <view class="tags-list">
+          <block wx:for="{{analyzedTags.background}}" wx:key="*this">
+            <view class="tag purple">{{item}}</view>
+          </block>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tools-grid">
+    <view class="tool-card {{hasAnalyzed ? '' : 'disabled'}}" bindtap="navigateToCoopMining">
+      <view class="icon-bg blue">
+        <image class="tool-icon" src="/images/coop-icon-new.png" mode="aspectFit"></image>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title">社工模型</text>
+        <text class="tool-desc">深度挖掘导师合作网络与社会关系</text>
+      </view>
+      <!-- Status Dot -->
+      <view class="status-dot {{hasAnalyzed ? 'green' : 'gray'}}"></view>
+      <image class="arrow" src="/images/arrow-right.png" mode="aspectFit"></image>
+    </view>
+
+    <view class="tool-card {{hasAnalyzed ? '' : 'disabled'}}" bindtap="navigateToResearchMatch">
+      <view class="icon-bg purple">
+        <image class="tool-icon" src="/images/search-active.png" mode="aspectFit"></image>
+      </view>
+      <view class="tool-info">
+        <text class="tool-title">智能推导师</text>
+        <text class="tool-desc">基于兴趣与背景智能匹配最佳导师</text>
+      </view>
+      <!-- Status Dot -->
+      <view class="status-dot {{hasAnalyzed ? 'green' : 'gray'}}"></view>
+      <image class="arrow" src="/images/arrow-right.png" mode="aspectFit"></image>
+    </view>
+  </view>
+</view>

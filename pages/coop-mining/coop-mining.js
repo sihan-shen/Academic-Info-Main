@@ -61,9 +61,6 @@ Page({
     }).exec();
   },
 
-  onPublish() {
-    wx.showToast({ title: '功能开发中', icon: 'none' });
-  },
 
   // 跳转到潜在合作项目列表
   navigateToOpportunities() {
@@ -77,23 +74,6 @@ Page({
     const projectId = e.currentTarget.dataset.id;
     wx.navigateTo({
       url: `/pages/coop-detail/coop-detail?id=${projectId}`
-    });
-  },
-
-  // 发起合作申请
-  onApply(e) {
-    const projectId = e.currentTarget.dataset.id;
-    wx.showModal({
-      title: '发起合作申请',
-      content: '确认要申请此合作项目吗？',
-      success: (res) => {
-        if (res.confirm) {
-          wx.showToast({
-            title: '申请已提交',
-            icon: 'success'
-          });
-        }
-      }
     });
   }
 });

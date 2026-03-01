@@ -50,10 +50,21 @@
   <view class="news-section">
     <view class="section-header">
       <text class="section-title">热点资讯</text>
-      <text class="more">更多 ></text>
+      <text class="more" bindtap="navigateToInterestSelection">修改 ></text>
     </view>
+    
+    <scroll-view class="tags-scroll-view" scroll-x="true" wx:if="{{selectedTags.length > 0}}">
+      <view class="tag-item {{activeTag === item ? 'active' : ''}}" 
+            wx:for="{{selectedTags}}" 
+            wx:key="*this"
+            bindtap="onTagTap"
+            data-tag="{{item}}">
+        {{item}}
+      </view>
+    </scroll-view>
+
     <view class="news-list">
-      <view class="news-item" wx:for="{{newsList}}" wx:key="id">
+      <view class="news-item" wx:for="{{displayNewsList}}" wx:key="id">
         <view class="news-title">{{item.title}}</view>
         <view class="news-desc">{{item.desc}}</view>
       </view>
@@ -61,57 +72,10 @@
   </view>
 
   <!-- Action Sheet Mask -->
-  <view class="action-sheet-mask {{showActionSheet || showCoopSheet ? 'show' : ''}}" 
+  <view class="action-sheet-mask {{showActionSheet ? 'show' : ''}}" 
         bindtap="closeAllSheets" 
         catchtouchmove="preventDefault"
-        wx:if="{{showActionSheet || showCoopSheet}}"></view>
+        wx:if="{{showActionSheet}}"></view>
   
 
-  <!-- 查合作 Action Sheet -->
-  <view class="action-sheet {{showCoopSheet ? 'show' : ''}}" wx:if="{{showCoopSheet}}">
-    <view class="sheet-header">
-      <text class="sheet-title">查合作</text>
-      <view class="close-btn" bindtap="closeAllSheets" aria-label="关闭">
-        <text class="close-x">✕</text>
-      </view>
-    </view>
-    <view class="sheet-content">
-      <view class="sheet-item" bindtap="navigateToResearchMatch">
-        <view class="sheet-icon-box blue">
-          <view class="icon-research">
-            <view class="research-node top"></view>
-            <view class="research-line"></view>
-            <view class="research-node bottom-left"></view>
-            <view class="research-node bottom-right"></view>
-            <view class="research-line-left"></view>
-            <view class="research-line-right"></view>
-          </view>
-        </view>
-        <view class="sheet-info">
-          <text class="sheet-item-title">研究领域匹配</text>
-          <text class="sheet-item-desc">智能匹配研究方向</text>
-        </view>
-        <image class="arrow-right" src="/images/arrow-right.png" mode="aspectFit"></image>
-      </view>
-      <view class="sheet-item" bindtap="navigateToCoopMining">
-        <view class="sheet-icon-box blue">
-          <view class="icon-coop">
-            <view class="person-left">
-              <view class="person-head"></view>
-              <view class="person-body"></view>
-            </view>
-            <view class="person-right">
-              <view class="person-head"></view>
-              <view class="person-body"></view>
-            </view>
-          </view>
-        </view>
-        <view class="sheet-info">
-          <text class="sheet-item-title">学术合作挖掘</text>
-          <text class="sheet-item-desc">发现潜在合作机会</text>
-        </view>
-        <image class="arrow-right" src="/images/arrow-right.png" mode="aspectFit"></image>
-      </view>
-    </view>
-  </view>
 </view>
