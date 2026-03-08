@@ -1,0 +1,96 @@
+<view class="container">
+  <!-- Top Blue Background Area -->
+  <view class="header-bg">
+    <!-- Edit Button (top-right floating) -->
+    <view class="edit-btn" bindtap="navigateToEditProfile">
+      <text>编辑</text>
+      <view class="edit-arrow"></view>
+    </view>
+
+    <!-- User Info -->
+    <view class="user-info">
+      <image class="avatar" src="{{userInfo.avatar || '/images/tutor-zhang.png'}}"></image>
+      <view class="info-content">
+        <text class="name">{{userInfo.name}}</text>
+        <view class="vip-badge">
+          <view class="badge-dot"></view>
+          <text>{{userInfo.vipStatus ? '会员用户' : '未开通会员'}}</text>
+        </view>
+        <text class="phone">{{userInfo.phone}}</text>
+        <view class="role-badge">
+          <view class="badge-dot"></view>
+          <text>{{userInfo.role}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Bio -->
+    <view class="bio-box">
+      <text class="bio-emoji">💭</text>
+      <text class="bio-text">{{userInfo.bio}}</text>
+    </view>
+  </view>
+
+  <!-- VIP Card (overlapping header) -->
+  <view class="vip-card" bindtap="navigateToVip">
+    <view class="vip-top">
+      <view class="star-icon">★</view>
+      <text class="vip-title">升级会员，解锁全部功能</text>
+    </view>
+
+    <view class="vip-features">
+      <view class="vip-feat">
+        <view class="feat-circle">
+          <view class="icon-tutor"></view>
+        </view>
+        <text>专属导师查询</text>
+      </view>
+      <view class="vip-feat">
+        <view class="feat-circle">
+          <view class="icon-match"></view>
+        </view>
+        <text>加速智能匹配</text>
+      </view>
+      <view class="vip-feat" bindtap="navigateToFavorites">
+        <view class="feat-circle">
+          <view class="icon-collect"></view>
+        </view>
+        <text>更多收藏位置</text>
+      </view>
+    </view>
+
+    <view class="vip-btn">
+      <text>每天低至1元，立即开通</text>
+    </view>
+  </view>
+
+  <!-- Horizontal Menu Row -->
+  <view class="menu-row">
+    <view class="menu-item" bindtap="navigateToHelp">
+      <image class="menu-icon" src="/images/help-icon.png" mode="aspectFit"></image>
+      <text class="menu-text">帮助中心</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="navigateToService">
+      <image class="menu-icon" src="/images/service-icon.png" mode="aspectFit"></image>
+      <text class="menu-text">客服中心</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="navigateToPrivacy">
+      <image class="menu-icon" src="/images/privacy-icon.png" mode="aspectFit"></image>
+      <text class="menu-text">隐私设置</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
+
+  <!-- Spacer pushes logout to bottom -->
+  <view class="spacer"></view>
+
+  <!-- Logout -->
+  <view class="logout-wrap">
+    <view class="logout-btn" bindtap="onLogout">
+      <image src="/images/logout-icon.png" mode="aspectFit"></image>
+      <text>退出登录</text>
+    </view>
+  </view>
+</view>

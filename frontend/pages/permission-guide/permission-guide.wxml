@@ -1,0 +1,51 @@
+<view class="page">
+  <!-- 顶部插图区域 -->
+  <view class="illustration-box">
+    <view class="illustration-icon">{{permissionIcon}}</view>
+    <text class="illustration-title">{{permissionName}}</text>
+  </view>
+
+  <!-- 权限说明 -->
+  <view class="info-box">
+    <view class="info-title">为什么需要此权限？</view>
+    <text class="info-desc">{{permissionReason}}</text>
+  </view>
+
+  <!-- 操作步骤 -->
+  <view class="steps-box">
+    <view class="steps-title">如何开启权限</view>
+    <view class="step-item">
+      <view class="step-number">1</view>
+      <text class="step-text">点击下方"前往设置"按钮</text>
+    </view>
+    <view class="step-item">
+      <view class="step-number">2</view>
+      <text class="step-text">在系统设置页面找到"{{permissionName}}"</text>
+    </view>
+    <view class="step-item">
+      <view class="step-number">3</view>
+      <text class="step-text">打开权限开关，点击完成</text>
+    </view>
+  </view>
+
+  <!-- 权限范围说明 -->
+  <view class="scope-box">
+    <view class="scope-title">权限使用范围</view>
+    <view class="scope-item" wx:for="{{permissionScopes}}" wx:key="index">
+      <text class="scope-icon">✓</text>
+      <text class="scope-text">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 底部按钮 -->
+  <view class="button-box">
+    <button class="btn-cancel" bindtap="onCancel">暂不开启</button>
+    <button class="btn-confirm" bindtap="onConfirm">前往设置</button>
+  </view>
+
+  <!-- 隐私提示 -->
+  <view class="privacy-tip">
+    <text class="privacy-icon">🔒</text>
+    <text class="privacy-text">我们重视您的隐私，所有权限仅用于提供更好的服务</text>
+  </view>
+</view>

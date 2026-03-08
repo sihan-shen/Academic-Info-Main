@@ -1,0 +1,71 @@
+<wxs src="./utils.wxs" module="utils" />
+
+<view class="container">
+  <scroll-view scroll-y="true" class="main-scroll">
+    <view class="content-wrapper">
+      <block wx:for="{{sections}}" wx:key="title" wx:for-item="section" wx:for-index="idx">
+        <view class="section-block">
+          <!-- Section Header -->
+          <view class="section-header" bindtap="toggleSection" data-section-index="{{idx}}">
+            <view class="header-left">
+              <view class="arrow {{section.collapsed ? 'collapsed' : ''}}"></view>
+              <view class="section-title">{{section.title}}</view>
+            </view>
+          </view>
+          
+          <!-- Directions Grid -->
+          <view class="tags-wrapper directions" hidden="{{section.collapsed}}">
+             <!-- "Select All" Tag -->
+             <view class="tag direction-tag {{utils.isAllSelected(selectedTags, section.title) ? 'selected' : ''}}" 
+                   catchtap="toggleSelectAll" 
+                   data-section-index="{{idx}}">
+               全选
+             </view>
+
+             <block wx:for="{{section.directions}}" wx:key="*this" wx:for-item="direction">
+                <view class="tag direction-tag {{utils.isTagSelected(selectedTags, direction) ? 'selected' : ''}}" 
+                      bindtap="toggleTag" 
+                      data-tag="{{direction}}"
+                      data-section-index="{{idx}}">
+                  {{direction}}
+                </view>
+             </block>
+          </view>
+        </view>
+      </block>
+      
+      <!-- Padding for bottom bar -->
+      <view style="height: 200rpx;"></view>
+    </view>
+  </scroll-view>
+
+  <!-- Bottom Bar -->
+  <view class="footer-bar">
+    <!-- Selected Tags Area -->
+    <view class="selected-tags-area" wx:if="{{selectedCount > 0}}">
+      <scroll-view scroll-x="true" class="selected-tags-scroll" enable-flex="true">
+        <block wx:for="{{selectedTags}}" wx:key="*this">
+          <!-- Handle special "All" tag display -->
+          <block wx:if="{{utils.isAllTag(item)}}">
+            <view class="selected-chip" catchtap="toggleSelectAll" data-section-index="{{utils.getSectionIndexFromTag(item, sections)}}">
+              <text>{{utils.getDisplayName(item)}}</text>
+              <icon class="chip-close-icon" type="clear" size="14" color="#fff"/>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="selected-chip" catchtap="toggleTag" data-tag="{{item}}" data-section-index="{{utils.getSectionIndexFromTag(item, sections)}}">
+              <text>{{item}}</text>
+              <icon class="chip-close-icon" type="clear" size="14" color="#fff"/>
+            </view>
+          </block>
+        </block>
+      </scroll-view>
+    </view>
+
+    <view class="match-info">
+      <text wx:if="{{selectedCount > 0}}">已选择 {{selectedCount}} 个标签</text>
+      <text wx:else>请选择感兴趣的标签（最多{{maxSelection}}个）</text>
+    </view>
+    <button class="confirm-btn" bindtap="confirmSelection">确定</button>
+  </view>
+</view>

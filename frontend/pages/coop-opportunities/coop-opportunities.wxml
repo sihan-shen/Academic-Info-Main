@@ -1,0 +1,57 @@
+<view class="page">
+  <!-- 头部标题 -->
+  <view class="page-header">
+    <text class="page-title">潜在合作项目</text>
+    <text class="page-subtitle">为您推荐24个合作机会</text>
+  </view>
+
+  <!-- 筛选区域 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filterType === 'all' ? 'active' : ''}}" bindtap="onFilterChange" data-type="all">
+      <text>全部</text>
+    </view>
+    <view class="filter-item {{filterType === 'ai' ? 'active' : ''}}" bindtap="onFilterChange" data-type="ai">
+      <text>人工智能</text>
+    </view>
+    <view class="filter-item {{filterType === 'bigdata' ? 'active' : ''}}" bindtap="onFilterChange" data-type="bigdata">
+      <text>大数据</text>
+    </view>
+    <view class="filter-item {{filterType === 'iot' ? 'active' : ''}}" bindtap="onFilterChange" data-type="iot">
+      <text>物联网</text>
+    </view>
+  </view>
+
+  <!-- 项目列表 -->
+  <view class="project-list">
+    <view class="coop-card" wx:for="{{displayList}}" wx:key="id">
+      <view class="coop-header">
+        <text class="coop-title">{{item.title}}</text>
+        <view class="coop-tags">
+          <text class="coop-tag" wx:for="{{item.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
+        </view>
+      </view>
+      <view class="coop-desc">{{item.desc}}</view>
+      <view class="coop-achievement">
+        <text class="achieve-label">过往成果：</text>{{item.achievement}}
+      </view>
+      <view class="coop-team-label">核心团队成员</view>
+      <view class="coop-members">
+        <view class="member-item" wx:for="{{item.members}}" wx:for-item="m" wx:key="name">
+          <view class="member-avatar">
+            <text>{{m.initial}}</text>
+          </view>
+          <text class="member-name">{{m.name}}（{{m.school}}）</text>
+        </view>
+      </view>
+      <view class="coop-actions">
+        <view class="btn-detail primary" bindtap="onViewDetail" data-id="{{item.id}}">查看合作详情</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{displayList.length === 0}}">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">暂无符合条件的项目</text>
+  </view>
+</view>

@@ -1,0 +1,57 @@
+<view class="container">
+  <!-- Tabs -->
+  <view class="tabs">
+    <view class="tab-item {{activeTab === 0 ? 'active' : ''}}" bindtap="onTabClick" data-index="0">收藏导师</view>
+    <view class="tab-item {{activeTab === 1 ? 'active' : ''}}" bindtap="onTabClick" data-index="1">收藏项目</view>
+  </view>
+
+  <!-- Content -->
+  <scroll-view class="content-scroll" scroll-y="true">
+    <!-- Favorite Tutors -->
+    <view class="list-container" wx:if="{{activeTab === 0}}">
+      <view class="tutor-card" wx:for="{{tutorList}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}">
+        <view class="card-header">
+          <image class="avatar" src="{{item.avatar}}"></image>
+          <view class="header-info">
+            <view class="name-row">
+              <text class="name">{{item.name}}</text>
+            </view>
+            <view class="school">{{item.school}} · {{item.department}}</view>
+            <view class="direction">{{item.direction}}</view>
+            <view class="date">收藏于 {{item.date}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Favorite Projects -->
+    <view class="list-container" wx:if="{{activeTab === 1}}">
+      <view class="project-card" wx:for="{{projectList}}" wx:key="id" bindtap="navigateToProjectDetail" data-id="{{item.id}}">
+        <view class="project-header">
+          <view class="project-title">{{item.title}}</view>
+          <view class="project-tags" wx:if="{{item.tags && item.tags.length > 0}}">
+            <text class="project-tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+          </view>
+        </view>
+        <view class="project-leader">负责人：{{item.leader}}</view>
+        <view class="project-info" wx:if="{{item.budget}}">
+          <text class="info-label">项目金额：</text>
+          <text class="info-value">{{item.budget}}</text>
+        </view>
+        <view class="project-progress">
+          <text>项目进度</text>
+          <progress percent="{{item.progress}}" stroke-width="6" activeColor="#3468b5" />
+          <text>{{item.progress}}%</text>
+        </view>
+        <view class="date">收藏于 {{item.date}}</view>
+      </view>
+      
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{projectList.length === 0}}">
+        <text class="empty-icon">📋</text>
+        <text class="empty-text">暂无收藏的项目</text>
+        <text class="empty-hint">去发现感兴趣的合作项目吧</text>
+      </view>
+    </view>
+  </scroll-view>
+</view>

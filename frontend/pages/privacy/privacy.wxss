@@ -1,0 +1,153 @@
+/** pages/privacy/privacy.wxss **/
+
+page {
+  background-color: #f5f6f8;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 0 0 60rpx;
+  box-sizing: border-box;
+}
+
+/* Section Label */
+.section-label {
+  font-size: 26rpx;
+  color: #888;
+  padding: 32rpx 32rpx 16rpx;
+  font-weight: 500;
+}
+
+/* Card */
+.card {
+  background: #fff;
+  margin: 0 0 24rpx;
+  border-radius: 0;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+
+/* Row */
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 32rpx;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.row:active {
+  background-color: #f8f9fa;
+}
+
+.row-border {
+  border-bottom: 1rpx solid #f3f3f3;
+}
+
+.row-border::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 32rpx;
+  right: 0;
+  height: 1rpx;
+  background-color: #f3f3f3;
+}
+
+.row-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Row Content (Title + Description) */
+.row-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Row Title */
+.row-title {
+  font-size: 32rpx;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 8rpx;
+  font-weight: 500;
+}
+
+/* Row Description */
+.row-desc {
+  font-size: 26rpx;
+  color: #999;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Row Right */
+.row-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: 24rpx;
+}
+
+.row-action {
+  font-size: 28rpx;
+  color: #3468b5;
+  margin-right: 8rpx;
+  font-weight: 500;
+}
+
+.row-action-blue {
+  font-size: 28rpx;
+  color: #3468b5;
+  margin-right: 8rpx;
+  font-weight: 500;
+}
+
+.row-status {
+  font-size: 26rpx;
+  color: #999;
+  margin-right: 8rpx;
+}
+
+.row-count {
+  font-size: 26rpx;
+  color: #999;
+  margin-right: 8rpx;
+  background: #f5f6f8;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+}
+
+.row-arrow {
+  font-size: 28rpx;
+  color: #ccc;
+  font-weight: bold;
+}
+
+/* Switch样式优化 */
+switch {
+  transform: scale(0.85);
+}
+
+/* 优化个性化推荐行 */
+.row:first-child {
+  min-height: 100rpx;
+}
+
+/* 响应式适配 */
+@media (max-width: 375px) {
+  .row-title {
+    font-size: 30rpx;
+  }
+  
+  .row-desc {
+    font-size: 24rpx;
+  }
+}

@@ -1,0 +1,32 @@
+<!--pages/search-simple/search-simple.wxml-->
+<view class="container">
+  <!-- Top Search Bar -->
+  <view class="search-header">
+    <view class="search-input-box">
+      <icon class="search-icon" type="search" size="14" color="#999"></icon>
+      <input class="search-input" 
+             placeholder="请输入导师姓名、院校或研究方向" 
+             placeholder-class="placeholder" 
+             focus="{{true}}"
+             confirm-type="search"
+             bindconfirm="onSearch"
+             bindinput="onInput"
+             value="{{keyword}}"
+      />
+      <view class="clear-icon" wx:if="{{keyword.length > 0}}" bindtap="clearInput">
+        <icon type="clear" size="14" color="#ccc"></icon>
+      </view>
+    </view>
+    <view class="search-btn" bindtap="onSearch">搜索</view>
+  </view>
+
+  <!-- Search Discovery -->
+  <view class="search-discovery">
+    <view class="section-title">搜索发现</view>
+    <view class="tags-container">
+      <view class="tag" wx:for="{{hotTags}}" wx:key="*this" bindtap="onTagTap" data-tag="{{item}}">
+        {{item}}
+      </view>
+    </view>
+  </view>
+</view>

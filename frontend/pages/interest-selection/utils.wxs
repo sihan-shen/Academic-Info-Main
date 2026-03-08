@@ -1,0 +1,35 @@
+module.exports = {
+  isTagSelected: function(selectedTags, tag) {
+    if (!selectedTags) return false;
+    return selectedTags.indexOf(tag) > -1;
+  },
+
+  isAllSelected: function(selectedTags, sectionTitle) {
+    if (!selectedTags) return false;
+    // Check if the special 'All' tag for this section is present
+    return selectedTags.indexOf(sectionTitle + ':All') > -1;
+  },
+  
+  isAllTag: function(tag) {
+    return tag.indexOf(':All') > -1;
+  },
+
+  getDisplayName: function(tag) {
+    if (tag.indexOf(':All') > -1) {
+      return tag.split(':')[0] + '（全选）';
+    }
+    return tag;
+  },
+
+  getSectionIndexFromTag: function(tag, sections) {
+    if (!sections) return -1;
+    var tagName = tag.indexOf(':All') > -1 ? tag.split(':')[0] : tag;
+    
+    // Find section that contains this tag (either as title or in directions)
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].title === tagName) return i;
+      if (sections[i].directions.indexOf(tagName) > -1) return i;
+    }
+    return -1;
+  }
+};

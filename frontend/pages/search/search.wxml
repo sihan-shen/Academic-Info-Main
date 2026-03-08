@@ -1,0 +1,287 @@
+<wxs module="filterUtils">
+  var isSingleSelected = function(selected, value) {
+    if (!selected) return false;
+    return selected.value === value;
+  };
+  
+  var isMultiSelected = function(selectedList, value) {
+    if (!selectedList) return false;
+    for (var i = 0; i < selectedList.length; i++) {
+      if (selectedList[i].value === value) return true;
+    }
+    return false;
+  };
+
+  var isAllSelected = function(filteredOptions, selectedList) {
+    if (!filteredOptions || filteredOptions.length === 0) return false;
+    if (!selectedList) return false;
+    
+    for (var i = 0; i < filteredOptions.length; i++) {
+       var opt = filteredOptions[i];
+       var found = false;
+       for (var j = 0; j < selectedList.length; j++) {
+         if (selectedList[j].value === opt.value) {
+           found = true;
+           break;
+         }
+       }
+       if (!found) return false;
+    }
+    return true;
+  };
+  
+  module.exports = {
+    isSingleSelected: isSingleSelected,
+    isMultiSelected: isMultiSelected,
+    isAllSelected: isAllSelected
+  };
+</wxs>
+
+<view class="container" bindtap="closeDropdowns">
+  
+  <!-- 搜索发现 (隐藏) -->
+  <view class="search-initial" wx:if="{{false}}">
+    <!-- ... (Previous search initial code kept) ... -->
+    <view class="search-header-bar">
+      <view class="search-input-wrapper">
+        <icon type="search" size="16" color="#999" class="search-icon-small"/>
+        <input class="search-input-field" 
+               placeholder="请输入导师姓名、院校或研究方向" 
+               placeholder-class="placeholder-style"
+               confirm-type="search"
+               bindconfirm="onSearchConfirm"
+               focus="true"
+        />
+      </view>
+      <view class="search-btn" bindtap="onSearchConfirm">搜索</view>
+    </view>
+    <!-- ... -->
+  </view>
+
+  <!-- 筛选面板 (默认显示) -->
+  <view class="filter-container" wx:if="{{searchMode === 'filter'}}">
+    <scroll-view scroll-y="true" class="more-scroll">
+      
+      <!-- Big Header -->
+      <view class="big-section-title">院校筛选</view>
+
+      <!-- Hot Schools Section -->
+      <view class="hot-schools-section">
+        <view class="section-subtitle">热门院校</view>
+        <view class="tags-wrapper">
+          <view class="tag hot-tag {{filterUtils.isMultiSelected(schoolConfig.selected, item.value) ? 'selected' : ''}}" 
+                wx:for="{{hotSchools}}" 
+                wx:key="value" 
+                catchtap="toggleSchoolSelect" 
+                data-item="{{item}}">
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+
+      <!-- Parallel City & School Section -->
+      <view class="parallel-filter-row">
+        <!-- City Filter (Single Select) -->
+        <view class="filter-col city-col">
+          <view class="col-label">所在省市</view>
+          <view class="search-select-box" catchtap="toggleCityDropdown">
+            <input class="select-input" 
+                   placeholder="搜索/选择省市" 
+                   value="{{cityConfig.searchText}}" 
+                   bindinput="onCityInput" 
+                   disabled="{{true}}" 
+                   /> 
+             <view class="dropdown-icon"></view>
+            
+            <!-- Dropdown List -->
+            <view class="dropdown-list" wx:if="{{cityConfig.showDropdown}}" catchtap="doNothing">
+              <view class="dropdown-item {{filterUtils.isSingleSelected(cityConfig.selected, item.value) ? 'active' : ''}}" 
+                    wx:for="{{cityConfig.filteredOptions}}" 
+                    wx:key="value" 
+                    bindtap="selectCity" 
+                    data-item="{{item}}">
+                {{item.label}}
+              </view>
+              <view class="dropdown-empty" wx:if="{{cityConfig.filteredOptions.length === 0}}">无匹配项</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- School Filter (Multi Select) -->
+        <view class="filter-col school-col">
+          <view class="col-label">所属院校</view>
+          <view class="search-select-box" catchtap="toggleSchoolDropdown">
+             <input class="select-input" 
+                   placeholder="搜索/选择院校(可多选)" 
+                   value="{{schoolConfig.searchText}}" 
+                   bindinput="onSchoolInput"
+                   />
+            <view class="dropdown-icon"></view>
+
+            <!-- Dropdown List -->
+            <view class="dropdown-list" wx:if="{{schoolConfig.showDropdown}}" catchtap="doNothing">
+              <!-- Select All Option -->
+              <view class="dropdown-item select-all" bindtap="toggleSelectAllSchools">
+                <checkbox checked="{{filterUtils.isAllSelected(schoolConfig.filteredOptions, schoolConfig.selected)}}" /> 全选
+              </view>
+              
+              <view class="dropdown-item" 
+                    wx:for="{{schoolConfig.filteredOptions}}" 
+                    wx:key="value" 
+                    catchtap="toggleSchoolSelect" 
+                    data-item="{{item}}">
+                <checkbox checked="{{filterUtils.isMultiSelected(schoolConfig.selected, item.value)}}" /> {{item.label}}
+              </view>
+              <view class="dropdown-empty" wx:if="{{schoolConfig.filteredOptions.length === 0}}">无匹配项</view>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- Selected School Tags Display Area -->
+       <view class="selected-schools-display" wx:if="{{schoolConfig.selected.length > 0}}">
+          <view class="selected-school-tag" 
+                wx:for="{{schoolConfig.selected}}" 
+                wx:key="value"
+                catchtap="toggleSchoolSelect" 
+                data-item="{{item}}">
+            <text>{{item.label}}</text>
+            <icon class="school-close-icon" type="clear" size="14" color="#fff"/>
+          </view>
+       </view>
+
+      <!-- NEW: Subject & Direction Section -->
+      <view class="big-section-title" style="margin-top: 40rpx;">学科筛选</view>
+
+      <!-- Hot Directions Section (Added) -->
+      <view class="hot-schools-section">
+        <view class="section-subtitle">热门方向</view>
+        <view class="tags-wrapper">
+          <view class="tag hot-tag {{filterUtils.isMultiSelected(directionConfig.selected, item.value) ? 'selected' : ''}}" 
+                wx:for="{{hotDirections}}" 
+                wx:key="value" 
+                catchtap="toggleDirectionSelect" 
+                data-item="{{item}}">
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+
+      <view class="parallel-filter-row">
+        <!-- Subject Filter (Single Select) -->
+        <view class="filter-col subject-col">
+          <view class="col-label">学科领域</view>
+          <view class="search-select-box" catchtap="toggleSubjectDropdown">
+            <input class="select-input" 
+                   placeholder="搜索/选择学科" 
+                   value="{{subjectConfig.searchText}}" 
+                   bindinput="onSubjectInput" 
+                   disabled="{{true}}"
+                   /> 
+             <view class="dropdown-icon"></view>
+            
+            <!-- Dropdown List -->
+            <view class="dropdown-list" wx:if="{{subjectConfig.showDropdown}}" catchtap="doNothing">
+              <view class="dropdown-item {{filterUtils.isSingleSelected(subjectConfig.selected, item.value) ? 'active' : ''}}" 
+                    wx:for="{{subjectConfig.filteredOptions}}" 
+                    wx:key="value" 
+                    bindtap="selectSubject" 
+                    data-item="{{item}}">
+                {{item.label}}
+              </view>
+              <view class="dropdown-empty" wx:if="{{subjectConfig.filteredOptions.length === 0}}">无匹配项</view>
+            </view>
+          </view>
+        </view>
+
+        <!-- Direction Filter (Multi Select) -->
+        <view class="filter-col direction-col">
+          <view class="col-label">研究方向</view>
+          <view class="search-select-box" catchtap="toggleDirectionDropdown">
+             <input class="select-input" 
+                   placeholder="搜索/选择方向(可多选)" 
+                   value="{{directionConfig.searchText}}" 
+                   bindinput="onDirectionInput"
+                   />
+            <view class="dropdown-icon"></view>
+
+            <!-- Dropdown List -->
+            <view class="dropdown-list" wx:if="{{directionConfig.showDropdown}}" catchtap="doNothing">
+              <!-- Select All Option -->
+              <view class="dropdown-item select-all" bindtap="toggleSelectAllDirections">
+                <checkbox checked="{{filterUtils.isAllSelected(directionConfig.filteredOptions, directionConfig.selected)}}" /> 全选
+              </view>
+              
+              <view class="dropdown-item" 
+                    wx:for="{{directionConfig.filteredOptions}}" 
+                    wx:key="value" 
+                    catchtap="toggleDirectionSelect" 
+                    data-item="{{item}}">
+                <checkbox checked="{{filterUtils.isMultiSelected(directionConfig.selected, item.value)}}" /> {{item.label}}
+              </view>
+              <view class="dropdown-empty" wx:if="{{directionConfig.filteredOptions.length === 0}}">无匹配项</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- Selected Direction Tags Display Area -->
+       <view class="selected-schools-display" wx:if="{{directionConfig.selected.length > 0}}">
+          <view class="selected-school-tag" 
+                wx:for="{{directionConfig.selected}}" 
+                wx:key="value"
+                catchtap="toggleDirectionSelect" 
+                data-item="{{item}}">
+            <text>{{item.label}}</text>
+            <icon class="school-close-icon" type="clear" size="14" color="#fff"/>
+          </view>
+       </view>
+
+
+      <!-- Existing Filter Groups -->
+      <view class="filter-section" wx:for="{{filterGroups}}" wx:key="key" wx:for-index="gIdx" wx:for-item="group">
+        <view class="section-title">{{group.title}}</view>
+        <view class="section-options">
+          <view class="option-chip {{opt.selected ? 'selected' : ''}}" 
+                wx:for="{{group.options}}" wx:key="value" wx:for-item="opt" wx:for-index="oIdx"
+                bindtap="selectGroupOption" data-group-index="{{gIdx}}" data-option-index="{{oIdx}}">
+            {{opt.label}}
+          </view>
+        </view>
+      </view>
+      
+      <!-- Padding -->
+      <view style="height: 120rpx;"></view>
+    </scroll-view>
+    
+    <!-- 底部固定栏: Count + 确定按钮 -->
+    <view class="bottom-bar">
+      <view class="count-info">共 {{totalCount}} 位导师符合条件</view>
+      <view class="btn-confirm" bindtap="confirmFilter">确定</view>
+    </view>
+  </view>
+
+  <!-- 结果列表 -->
+  <view class="results-container" wx:if="{{searchMode === 'result'}}">
+    <scroll-view class="tutor-list" scroll-y="true">
+      <view class="tutor-card" wx:for="{{tutorList}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}">
+        <view class="card-header">
+          <image class="avatar" src="{{item.avatar}}"></image>
+          <view class="header-info">
+            <view class="name-row">
+              <text class="name">{{item.name}}</text>
+            </view>
+            <view class="school">{{item.school}} · {{item.department}}</view>
+            <view class="direction" wx:if="{{item.direction}}">核心方向：{{item.direction}}</view>
+          </view>
+        </view>
+        <view class="card-desc">{{item.desc}}</view>
+        <view class="tags" wx:if="{{item.tags && item.tags.length > 0}}">
+           <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+        </view>
+        <view class="title-tag" wx:if="{{item.titleTag}}">{{item.titleTag}}</view>
+      </view>
+      <view class="btn-re-filter" bindtap="openFilter">重新筛选</view>
+    </scroll-view>
+  </view>
+</view>

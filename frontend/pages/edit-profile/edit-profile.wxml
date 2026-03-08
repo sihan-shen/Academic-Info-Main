@@ -1,0 +1,137 @@
+<view class="page">
+  <!-- 头像 -->
+  <view class="card avatar-card" bindtap="onEditAvatar">
+    <text class="label">头像</text>
+    <view class="avatar-wrap">
+      <image class="avatar-img" src="{{userInfo.avatar || '/images/tutor-zhang.png'}}"></image>
+      <view class="camera-icon">
+        <text class="camera-text">📷</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 姓名 -->
+  <view class="card" bindtap="onEditName">
+    <text class="label">姓名</text>
+    <view class="right">
+      <text class="value">{{userInfo.name}}</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 手机号 -->
+  <view class="card" bindtap="onEditPhone">
+    <text class="label">手机号</text>
+    <view class="right">
+      <text class="value">{{userInfo.phone}}</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 性别 -->
+  <view class="card" bindtap="onEditGender">
+    <text class="label">性别</text>
+    <view class="right">
+      <text class="value">{{userInfo.gender}}</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 学术状态 -->
+  <view class="card" bindtap="onEditAcademicStatus">
+    <text class="label">学术状态</text>
+    <view class="right">
+      <text class="value">{{userInfo.academicStatus}}</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 个性签名 -->
+  <view class="card" bindtap="onEditSignature">
+    <text class="label">个性签名</text>
+    <view class="right">
+      <text class="value {{userInfo.signature ? '' : 'muted'}}">{{userInfo.signature || '这位学者很懒，什么都没留下'}}</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 所属机构 -->
+  <view class="card" bindtap="onEditInstitution">
+    <text class="label">所属机构</text>
+    <view class="right">
+      <text class="value {{userInfo.institution ? '' : 'muted'}}">{{userInfo.institution || '未填写'}}</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 当前导师 -->
+  <view class="card" bindtap="onEditTutor">
+    <text class="label">当前导师</text>
+    <view class="right">
+      <text class="value {{userInfo.tutor ? '' : 'muted'}}">{{userInfo.tutor || '未填写'}}</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+
+  <!-- 学术成就 -->
+  <view class="card" bindtap="onEditAchievement">
+    <text class="label">学术成就</text>
+    <view class="right">
+      <text class="value {{userInfo.achievement ? '' : 'muted'}}">{{userInfo.achievement || '这位学者很懒，什么都没留下'}}</text>
+      <text class="arrow">></text>
+    </view>
+  </view>
+</view>
+
+<!-- 编辑对话框 -->
+<view class="modal-mask" wx:if="{{showModal}}" bindtap="onCloseModal" catchtouchmove="preventDefault"></view>
+<view class="modal {{showModal ? 'show' : ''}}" wx:if="{{showModal}}">
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">编辑{{currentField.label}}</text>
+      <view class="modal-close" bindtap="onCloseModal">✕</view>
+    </view>
+    
+    <view class="modal-body">
+      <!-- 文本输入 -->
+      <input 
+        wx:if="{{currentField.type === 'input'}}"
+        class="modal-input" 
+        value="{{currentField.value}}" 
+        placeholder="请输入{{currentField.label}}"
+        bindinput="onInputChange"
+        maxlength="{{currentField.maxlength || 50}}"
+      />
+      
+      <!-- 多行文本输入 -->
+      <textarea 
+        wx:if="{{currentField.type === 'textarea'}}"
+        class="modal-textarea" 
+        value="{{currentField.value}}" 
+        placeholder="请输入{{currentField.label}}"
+        bindinput="onInputChange"
+        maxlength="{{currentField.maxlength || 200}}"
+        auto-height
+      />
+      
+      <!-- 选择器 -->
+      <view class="picker-list" wx:if="{{currentField.type === 'picker'}}">
+        <view 
+          class="picker-item {{item === currentField.value ? 'active' : ''}}"
+          wx:for="{{currentField.options}}" 
+          wx:key="*this"
+          bindtap="onPickerSelect"
+          data-value="{{item}}"
+        >
+          <text>{{item}}</text>
+          <text class="check-icon" wx:if="{{item === currentField.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+    
+    <view class="modal-footer">
+      <button class="btn-cancel" bindtap="onCloseModal">取消</button>
+      <button class="btn-confirm" bindtap="onConfirmEdit">确定</button>
+    </view>
+  </view>
+</view>

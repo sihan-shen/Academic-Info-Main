@@ -1,0 +1,8 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "导查查",
+  "enablePullDownRefresh": false,
+  "backgroundTextStyle": "light",
+  "backgroundColor": "#f9fafb",
+  "navigationStyle": "default"
+}

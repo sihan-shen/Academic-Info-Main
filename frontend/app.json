@@ -1,0 +1,68 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/smart-analysis/smart-analysis",
+    "pages/interest-selection/interest-selection",
+    "pages/login/login",
+    "pages/search/search",
+    "pages/search-simple/search-simple",
+    "pages/tutor-detail/tutor-detail",
+    "pages/user/user",
+    "pages/favorites/favorites",
+    "pages/tutor-library/tutor-library",
+    "pages/edit-profile/edit-profile",
+    "pages/vip/vip",
+    "pages/help/help",
+    "pages/service/service",
+    "pages/privacy/privacy",
+    "pages/permission-guide/permission-guide",
+    "pages/research-match/research-match",
+    "pages/coop-search/coop-search",
+    "pages/coop-mining/coop-mining",
+    "pages/coop-opportunities/coop-opportunities",
+    "pages/coop-detail/coop-detail"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "导查查",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f9fafb",
+    "enablePullDownRefresh": false,
+    "onReachBottomDistance": 50
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#1296db",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/smart-analysis/smart-analysis",
+        "text": "智能分析",
+        "iconPath": "images/search.png",
+        "selectedIconPath": "images/search-active.png"
+      },
+      {
+        "pagePath": "pages/user/user",
+        "text": "我的",
+        "iconPath": "images/user.png",
+        "selectedIconPath": "images/user-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "requiredBackgroundModes": [],
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  }
+}

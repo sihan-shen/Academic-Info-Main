@@ -1,0 +1,84 @@
+<view class="container">
+  <!-- Search Bar (White background, below blue nav) -->
+  <view class="search-container">
+    <view class="search-input-box">
+      <icon class="search-icon" type="search" size="16" color="#999"></icon>
+      <input class="search-input" placeholder="搜索院校" placeholder-class="placeholder" bindconfirm="onSearch" />
+    </view>
+  </view>
+
+  <view class="content-body">
+    <!-- City Filter Card -->
+    <view class="filter-card">
+      <view class="card-header">
+        <text class="title">按省市筛选</text>
+        <view class="more" bindtap="showMoreCities">
+          <text>更多 ></text>
+        </view>
+      </view>
+      <view class="tags-container">
+        <view 
+          class="city-tag" 
+          wx:for="{{filters}}" 
+          wx:key="id"
+          bindtap="onSelectFilter"
+          data-id="{{item.id}}"
+          data-name="{{item.name}}"
+        >
+          {{item.name}}
+        </view>
+      </view>
+    </view>
+
+    <!-- City Filter Popup -->
+    <view class="city-filter-mask {{showCityFilter ? 'show' : ''}}" bindtap="hideCityFilter"></view>
+    <view class="city-filter-popup {{showCityFilter ? 'show' : ''}}">
+      <view class="popup-header">
+        <text class="popup-title">选择地区</text>
+        <view class="popup-close" bindtap="hideCityFilter">
+          <icon type="clear" size="20" color="#ccc"/>
+        </view>
+      </view>
+      <scroll-view scroll-y class="popup-body" style="height: 60vh;">
+        <view class="city-group" wx:for="{{allCities}}" wx:key="title">
+          <view class="group-title">{{item.title}}</view>
+          <view class="group-cities">
+            <view 
+              class="city-tag-large" 
+              wx:for="{{item.cities}}" 
+              wx:key="id" 
+              wx:for-item="city"
+              bindtap="onSelectCity"
+              data-id="{{city.id}}"
+              data-name="{{city.name}}"
+            >
+              {{city.name}}
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- Hot Schools -->
+    <view class="section-title">热门院校</view>
+    <view class="school-list">
+      <view class="school-card" wx:for="{{schools}}" wx:key="id" bindtap="navigateToSchool" data-id="{{item.id}}">
+        <view class="card-top">
+          <text class="school-name">{{item.name}}</text>
+          <text class="location">{{item.location}}</text>
+        </view>
+        <view class="card-bottom">
+          <text class="tutor-count">{{item.tutorCount}} 位导师</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Hot Departments -->
+    <view class="section-title">热门院系</view>
+    <view class="department-grid">
+      <view class="department-card" wx:for="{{departments}}" wx:key="id" bindtap="navigateToDepartment" data-name="{{item.name}}">
+        {{item.name}}
+      </view>
+    </view>
+  </view>
+</view>

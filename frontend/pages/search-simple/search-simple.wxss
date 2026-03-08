@@ -1,0 +1,71 @@
+/* pages/search-simple/search-simple.wxss */
+.container {
+  padding: 0 30rpx;
+  background-color: #fff;
+  min-height: 100vh;
+}
+
+.search-header {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  background-color: #fff;
+}
+
+.search-input-box {
+  flex: 1;
+  background-color: #f7f8fa;
+  height: 72rpx;
+  border-radius: 8rpx; /* 较小的圆角 */
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+  margin-right: 20rpx;
+}
+
+.search-icon {
+  margin-right: 12rpx;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.clear-icon {
+  padding: 10rpx;
+  display: flex;
+  align-items: center;
+}
+
+.search-btn {
+  font-size: 30rpx;
+  color: #007aff;
+  font-weight: bold;
+}
+
+.search-discovery {
+  padding-top: 40rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 30rpx;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.tag {
+  background-color: #f7f8fa;
+  color: #666;
+  font-size: 26rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 8rpx;
+}

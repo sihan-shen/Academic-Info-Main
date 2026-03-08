@@ -1,0 +1,508 @@
+/** pages/index/index.wxss */
+
+/* 颜色变量 - 使用直接值以确保兼容性 */
+page {
+  background-color: #f9fafb;
+}
+
+.container {
+  background-color: #f9fafb;
+  min-height: 100vh;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.header {
+  position: relative;
+  width: 100%;
+  height: 424rpx; /* 212px * 2 */
+}
+
+.header-bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  padding-top: 64rpx;
+  text-align: center;
+  color: white;
+}
+
+.title {
+  font-size: 64rpx; /* 32px * 2 */
+  font-weight: bold;
+  letter-spacing: 3rpx;
+  margin-bottom: 40rpx; /* Increased from 20rpx */
+}
+
+.subtitle {
+  font-size: 40rpx; /* 20px * 2 */
+  opacity: 0.9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.subtitle text {
+  margin: 0 10rpx;
+}
+
+.divider {
+  opacity: 0.6;
+}
+
+.search-bar-container {
+  position: relative;
+  margin-top: -55rpx; /* Increased overlap */
+  padding: 0 30rpx;
+  z-index: 2;
+}
+
+.search-bar {
+  background: white;
+  border-radius: 40rpx;
+  height: 110rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 30rpx;
+  box-shadow: 0 10rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.search-icon, .camera-icon {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.search-input {
+  flex: 1;
+  margin: 0 20rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.placeholder {
+  color: #99a1af;
+}
+
+.quick-access {
+  background: white;
+  margin: 30rpx;
+  padding: 40rpx 0;
+  border-radius: 20rpx;
+  display: flex;
+  justify-content: space-around;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.access-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.access-item .icon-bg {
+  margin-bottom: 16rpx;
+}
+
+.icon-bg {
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 12rpx rgba(0, 0, 0, 0.05);
+  background-color: #E6F7FF;
+}
+
+.icon-bg image {
+  width: 56rpx;
+  height: 56rpx;
+}
+
+/* Removed individual color classes */
+
+.access-item text {
+  font-size: 24rpx;
+  color: #364153;
+}
+
+.news-section {
+  padding: 0 30rpx 40rpx;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+  padding: 0 12rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1e2939;
+}
+
+.more {
+  font-size: 24rpx;
+  color: #6a7282;
+}
+
+.news-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.news-item {
+  background: white;
+  padding: 32rpx;
+  border-radius: 32rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 24rpx;
+}
+
+.news-item:last-child {
+  margin-bottom: 0;
+}
+
+.news-item:active {
+  transform: scale(0.98);
+  box-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.05);
+}
+
+.news-title {
+  font-size: 32rpx;
+  color: #1e2939;
+  margin-bottom: 16rpx;
+  line-height: 1.4;
+}
+
+.news-desc {
+  font-size: 26rpx;
+  color: #6a7282;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+/* Tags Scroll View */
+.tags-scroll-view {
+  white-space: nowrap;
+  width: 100%;
+  margin-bottom: 30rpx;
+  height: 70rpx; /* Fixed height for consistent layout */
+}
+
+.tag-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 60rpx;
+  padding: 0 30rpx;
+  background-color: #f7f8fa;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #666;
+  margin-right: 20rpx;
+  vertical-align: top;
+  transition: all 0.3s ease;
+}
+
+.tag-item.active {
+  background-color: #e6f7ff;
+  color: #2b7fff;
+  font-weight: 500;
+}
+
+.add-btn {
+  width: 60rpx;
+  height: 60rpx;
+  padding: 0;
+  border-radius: 50%;
+  background-color: #2b7fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: top;
+  margin-right: 0; /* Last item */
+}
+
+.plus-icon {
+  color: white;
+  font-size: 40rpx;
+  font-weight: 300;
+  line-height: 1;
+  margin-top: -4rpx; /* Slight visual adjustment */
+}
+
+.action-sheet-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.action-sheet-mask.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.action-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+  z-index: 1000;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  padding-bottom: env(safe-area-inset-bottom);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.action-sheet.show {
+  transform: translateY(0);
+}
+
+.sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 40rpx;
+  border-bottom: 1rpx solid #f3f4f6;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1;
+}
+
+.sheet-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #101828;
+}
+
+.close-btn {
+  background: #f3f4f6;
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.close-btn:active {
+  background-color: #e5e7eb;
+}
+
+.close-btn image {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.sheet-content {
+  padding: 30rpx 40rpx 30rpx;
+}
+
+.sheet-item {
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  padding: 30rpx;
+  border-radius: 24rpx;
+  margin-bottom: 24rpx;
+  transition: background-color 0.2s ease;
+}
+
+.sheet-item:active {
+  background-color: #f3f4f6;
+}
+
+.sheet-item:last-child {
+  margin-bottom: 0;
+}
+
+.sheet-icon-box {
+  width: 96rpx;
+  height: 96rpx;
+  background: #2b7fff;
+  border-radius: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 30rpx;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.sheet-icon-box.blue {
+  background: #2b7fff;
+}
+
+.sheet-icon-box.purple {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+}
+
+.sheet-icon-box.blue-gradient {
+  background: linear-gradient(135deg, #5b7cfa 0%, #4a6cf7 100%);
+}
+
+.sheet-icon-box image {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+/* 研究领域图标 - 树状网络结构 */
+.icon-research {
+  width: 48rpx;
+  height: 48rpx;
+  position: relative;
+}
+
+.research-node {
+  width: 12rpx;
+  height: 12rpx;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.research-node.top {
+  top: 6rpx;
+  left: 18rpx;
+}
+
+.research-node.bottom-left {
+  bottom: 8rpx;
+  left: 6rpx;
+}
+
+.research-node.bottom-right {
+  bottom: 8rpx;
+  right: 6rpx;
+}
+
+.research-line {
+  width: 2rpx;
+  height: 18rpx;
+  background: white;
+  position: absolute;
+  top: 18rpx;
+  left: 23rpx;
+}
+
+.research-line-left {
+  width: 16rpx;
+  height: 2rpx;
+  background: white;
+  position: absolute;
+  bottom: 14rpx;
+  left: 12rpx;
+  transform: rotate(-45deg);
+  transform-origin: left center;
+}
+
+.research-line-right {
+  width: 16rpx;
+  height: 2rpx;
+  background: white;
+  position: absolute;
+  bottom: 14rpx;
+  right: 12rpx;
+  transform: rotate(45deg);
+  transform-origin: right center;
+}
+
+/* 学术合作图标 - 两个人 */
+.icon-coop {
+  width: 48rpx;
+  height: 48rpx;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 6rpx;
+}
+
+.person-left,
+.person-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.person-head {
+  width: 12rpx;
+  height: 12rpx;
+  background: white;
+  border-radius: 50%;
+  margin-bottom: 4rpx;
+}
+
+.person-body {
+  width: 16rpx;
+  height: 16rpx;
+  background: white;
+  border-radius: 50% 50% 0 0;
+}
+
+.sheet-info {
+  flex: 1;
+}
+
+.sheet-item-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #101828;
+  margin-bottom: 8rpx;
+  line-height: 1.4;
+}
+
+.sheet-item-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #6a7282;
+  line-height: 1.5;
+}
+
+.arrow-right {
+  width: 40rpx;
+  height: 40rpx;
+  opacity: 0.3;
+  flex-shrink: 0;
+}
+
+.sheet-icon-text {
+  font-size: 40rpx;
+}
+
+.close-x {
+  font-size: 28rpx;
+  color: #6a7282;
+}
+/* 优化遮罩层滚动 */
+.action-sheet-mask {
+  touch-action: none;
+}

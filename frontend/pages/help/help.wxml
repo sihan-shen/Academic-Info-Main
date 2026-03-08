@@ -1,0 +1,87 @@
+<view class="page">
+  <!-- Search Bar -->
+  <view class="search-bar">
+    <text class="search-icon">🔍</text>
+    <input class="search-input" placeholder="搜索问题关键词..." placeholder-class="search-placeholder" bindinput="onSearchInput" value="{{searchKey}}" />
+  </view>
+
+  <!-- Category Tags -->
+  <scroll-view class="tag-scroll" scroll-x enable-flex>
+    <view class="tag-list">
+      <view class="tag {{activeTag === '' ? 'tag-active' : ''}}" bindtap="onTagTap" data-tag="">
+        <text class="tag-ico">▦</text>
+        <text>全部</text>
+      </view>
+      <view class="tag {{activeTag === '基础使用' ? 'tag-active' : ''}}" bindtap="onTagTap" data-tag="基础使用">
+        <text class="tag-ico">②</text>
+        <text>基础使用</text>
+      </view>
+      <view class="tag {{activeTag === '导师查询' ? 'tag-active' : ''}}" bindtap="onTagTap" data-tag="导师查询">
+        <text class="tag-ico">👥</text>
+        <text>导师查询</text>
+      </view>
+      <view class="tag {{activeTag === 'AI功能' ? 'tag-active' : ''}}" bindtap="onTagTap" data-tag="AI功能">
+        <text class="tag-ico">✦</text>
+        <text>AI功能</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- Hot Questions (only when "全部" is selected) -->
+  <view class="section" wx:if="{{activeTag === '' && !searchKey}}">
+    <view class="section-title">
+      <text class="section-icon">🔥</text>
+      <text class="section-text">热门问题</text>
+    </view>
+    <view class="hot-grid">
+      <view class="hot-item" wx:for="{{hotQuestions}}" wx:key="index">
+        <text>{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Questions Section -->
+  <view class="section">
+    <view class="section-title">
+      <text class="section-text">{{activeTag || '全部问题'}}</text>
+      <text class="section-count">({{filteredQuestions.length}})</text>
+    </view>
+
+    <view class="question-list">
+      <view class="question-card" wx:for="{{filteredQuestions}}" wx:key="index" bindtap="onToggleQuestion" data-idx="{{index}}">
+        <view class="q-top-row">
+          <view class="q-tag q-tag-{{item.tagClass}}">{{item.category}}</view>
+          <text class="q-chevron {{item.expanded ? 'q-chevron-up' : ''}}">∨</text>
+        </view>
+        <text class="q-text">{{item.question}}</text>
+        <view class="q-answer" wx:if="{{item.expanded}}">
+          <text class="q-answer-text">{{item.answer || '暂无详细解答，请联系在线客服获取帮助。'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Bottom Spacer -->
+  <view class="bottom-spacer"></view>
+
+  <!-- Bottom Bar -->
+  <view class="bottom-bar">
+    <view class="bottom-info">
+      <view class="bottom-bubble">💬</view>
+      <view class="bottom-text-wrap">
+        <text class="bottom-title">没找到答案？</text>
+        <text class="bottom-sub">联系客服获取帮助</text>
+      </view>
+    </view>
+    <view class="bottom-btns">
+      <view class="btn-chat" bindtap="goToService">
+        <text class="btn-ico">💬</text>
+        <text>在线客服</text>
+      </view>
+      <view class="btn-phone">
+        <text class="btn-ico">📞</text>
+        <text>电话客服</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,81 @@
+<view class="container">
+  <!-- Header Section -->
+  <view class="header">
+    <image class="header-bg" src="/images/home-bg.png" mode="aspectFill" binderror="onImageError"></image>
+    <view class="header-content">
+      <view class="title">导查查</view>
+      <view class="subtitle">
+        <text>导师信息一点通</text>
+        <text class="divider">|</text>
+        <text>合作对象全知晓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Search Bar -->
+  <view class="search-bar-container">
+    <view class="search-bar" bindtap="navigateToSimpleSearch">
+      <image class="search-icon" src="/images/search-icon.png" mode="aspectFit"></image>
+      <input class="search-input" 
+             placeholder="搜索导师姓名、院校、研究领域、职称" 
+             placeholder-class="placeholder" 
+             disabled="true" />
+      <image class="camera-icon" src="/images/camera-icon.png" mode="aspectFit"></image>
+    </view>
+  </view>
+
+  <!-- Quick Access Buttons -->
+  <view class="quick-access">
+    <view class="access-item" bindtap="navigateToSearch">
+      <view class="icon-bg">
+        <image src="/images/tutor-icon-new.png" mode="aspectFit"></image>
+      </view>
+      <text>查导师</text>
+    </view>
+    <view class="access-item" bindtap="navigateToCoop">
+      <view class="icon-bg">
+        <image src="/images/coop-icon-new.png" mode="aspectFit"></image>
+      </view>
+      <text>查合作</text>
+    </view>
+    <view class="access-item" bindtap="navigateToFav">
+      <view class="icon-bg">
+        <image src="/images/fav-icon-new.png" mode="aspectFit"></image>
+      </view>
+      <text>我的收藏</text>
+    </view>
+  </view>
+
+  <!-- Hot News Section -->
+  <view class="news-section">
+    <view class="section-header">
+      <text class="section-title">热点资讯</text>
+      <text class="more" bindtap="navigateToInterestSelection">修改 ></text>
+    </view>
+    
+    <scroll-view class="tags-scroll-view" scroll-x="true" wx:if="{{selectedTags.length > 0}}">
+      <view class="tag-item {{activeTag === item ? 'active' : ''}}" 
+            wx:for="{{selectedTags}}" 
+            wx:key="*this"
+            bindtap="onTagTap"
+            data-tag="{{item}}">
+        {{item}}
+      </view>
+    </scroll-view>
+
+    <view class="news-list">
+      <view class="news-item" wx:for="{{displayNewsList}}" wx:key="id">
+        <view class="news-title">{{item.title}}</view>
+        <view class="news-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Action Sheet Mask -->
+  <view class="action-sheet-mask {{showActionSheet ? 'show' : ''}}" 
+        bindtap="closeAllSheets" 
+        catchtouchmove="preventDefault"
+        wx:if="{{showActionSheet}}"></view>
+  
+
+</view>

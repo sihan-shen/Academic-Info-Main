@@ -1,0 +1,266 @@
+<view class="container">
+    <!-- Tutor Header -->
+    <view class="tutor-header">
+      <view class="header-top">
+        <image class="avatar" src="{{tutor.avatar}}"></image>
+        <view class="header-info">
+          <view class="name">{{tutor.name}}</view>
+          <view class="school">{{tutor.school}} · {{tutor.department}}</view>
+          <view class="tags">
+            <text class="tag" wx:for="{{tutor.tags}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="header-stats">
+        <view class="stat-item">
+          <text class="stat-num">150+</text>
+          <text class="stat-label">发表论文</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">36</text>
+          <text class="stat-label">高影响</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">98%</text>
+          <text class="stat-label">就业率</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Tabs (Sticky) -->
+    <view class="tabs-sticky-wrapper {{isSticky ? 'tabs-fixed' : ''}}">
+      <scroll-view class="tabs-scroll" scroll-x="true" enable-flex="true" scroll-with-animation="true" scroll-into-view="tab-{{activeTab > 1 ? activeTab - 1 : 0}}">
+        <view class="tabs-container">
+          <view wx:for="{{tabs}}" wx:key="*this" id="tab-{{index}}" 
+                class="tab-item {{activeTab === index ? 'active' : ''}}" 
+                bindtap="onTabClick" data-index="{{index}}">
+            {{item}}
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+    
+    <!-- Placeholder for fixed tabs -->
+    <view class="tabs-placeholder" wx:if="{{isSticky}}" style="height: 90rpx;"></view>
+
+    <!-- Content -->
+    <view class="content-body">
+      <!-- Tab 0: 个人简介 -->
+      <view class="content-section section-odd" id="section-0">
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">个人简介</view>
+            </view>
+            <view class="section-text">{{tutor.bio}}</view>
+        </view>
+        
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">研究方向</view>
+            </view>
+            <view class="section-text">{{tutor.direction}}</view>
+        </view>
+      </view>
+
+      <!-- Tab 1: 社会关系 -->
+      <view class="content-section section-even" id="section-1">
+        <!-- New Graph Section -->
+        <view class="section-container">
+            <view class="section-header">
+                <view class="section-title">学术合作关系图谱</view>
+            </view>
+            <view class="graph-box">
+                <view class="graph-content">
+                    <!-- Lines -->
+                    <view class="graph-line line-tl"></view>
+                    <view class="graph-line line-tr"></view>
+                    <view class="graph-line line-bl"></view>
+                    <view class="graph-line line-br"></view>
+                    
+                    <!-- Nodes -->
+                    <view class="graph-node node-center">
+                        <view class="node-circle circle-you"></view>
+                        <text class="node-label">您</text>
+                    </view>
+                    <view class="graph-node node-tl">
+                        <view class="node-circle circle-blue"></view>
+                        <text class="node-label">导师A</text>
+                    </view>
+                    <view class="graph-node node-tr">
+                        <view class="node-circle circle-orange"></view>
+                        <text class="node-label">导师B</text>
+                    </view>
+                    <view class="graph-node node-bl">
+                        <view class="node-circle circle-green"></view>
+                        <text class="node-label">团队C</text>
+                    </view>
+                    <view class="graph-node node-br">
+                        <view class="node-circle circle-red"></view>
+                        <text class="node-label">机构D</text>
+                    </view>
+
+                    <!-- Search Icon (Decorative) -->
+                    <view class="graph-icon-search">
+                        <view class="search-glass"></view>
+                    </view>
+                </view>
+                <view class="graph-caption">点击节点查看详情，支持缩放查看</view>
+            </view>
+        </view>
+
+        <view class="section-container">
+          <view class="section-header">
+            <view class="section-title">学术兼职</view>
+          </view>
+          <view class="section-text">{{tutor.service}}</view>
+        </view>
+        <view class="section-container">
+          <view class="section-header">
+              <view class="section-title">社会任职</view>
+          </view>
+           <view class="paper-list">
+              <view class="paper-item" wx:for="{{tutor.socials}}" wx:key="id">
+                  <view class="paper-title">{{item.org}}</view>
+                  <view class="paper-info">{{item.role}}</view>
+              </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- Tab 2: 成长脉络 -->
+      <view class="content-section section-odd" id="section-2">
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">成长脉络</view>
+            </view>
+            <view class="timeline">
+            <view class="timeline-item" wx:for="{{tutor.growthPath}}" wx:key="index">
+                <view class="timeline-left">
+                <view class="timeline-year">{{item.year}}</view>
+                </view>
+                <view class="timeline-center">
+                <view class="timeline-dot"></view>
+                <view class="timeline-line" wx:if="{{index < tutor.growthPath.length - 1}}"></view>
+                </view>
+                <view class="timeline-right">
+                <view class="timeline-content">{{item.content}}</view>
+                <view class="timeline-tag tag-{{item.type === '工作经历' ? 'work' : (item.type === '荣誉' ? 'honor' : 'edu')}}">{{item.type}}</view>
+                </view>
+            </view>
+            </view>
+        </view>
+      </view>
+
+      <!-- Tab 3: 学术成果 -->
+      <view class="content-section section-even" id="section-3">
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">主要成就</view>
+            </view>
+            <view class="section-text">{{tutor.achievements}}</view>
+        </view>
+
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">代表性论文</view>
+            </view>
+            <view class="paper-list">
+            <view class="paper-item" wx:for="{{tutor.papers}}" wx:key="id">
+                <view class="paper-title">{{item.title}}</view>
+                <view class="paper-info">
+                <text class="paper-journal">{{item.journal}}</text>
+                <text class="paper-year">{{item.year}}</text>
+                </view>
+            </view>
+            </view>
+        </view>
+      </view>
+
+      <!-- Tab 4: 合作资源 -->
+      <view class="content-section section-odd" id="section-4">
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">合作机构</view>
+            </view>
+            <view class="project-list">
+                <view class="project-item" wx:for="{{tutor.coops}}" wx:key="id">
+                    <view class="project-header">
+                        <view class="project-title">{{item.name}}</view>
+                        <view class="project-role">{{item.type}}</view>
+                    </view>
+                    <view class="project-desc">{{item.desc}}</view>
+                </view>
+            </view>
+        </view>
+      </view>
+
+      <!-- Tab 5: 学生培养 -->
+      <view class="content-section section-even" id="section-5">
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">指导情况</view>
+            </view>
+            <view class="section-text">{{tutor.guidance}}</view>
+        </view>
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">毕业生去向</view>
+            </view>
+            <view class="paper-list">
+            <view class="paper-item" wx:for="{{tutor.students}}" wx:key="id">
+                <view class="paper-title">{{item.name}} ({{item.year}})</view>
+                <view class="paper-info">
+                <text class="paper-journal">{{item.dest}}</text>
+                </view>
+            </view>
+            </view>
+        </view>
+      </view>
+
+      <!-- Tab 6: 项目 -->
+      <view class="content-section section-odd" id="section-6">
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">科研项目</view>
+            </view>
+            <view class="project-list">
+            <view class="project-item" wx:for="{{tutor.projects}}" wx:key="id">
+                <view class="project-header">
+                <view class="project-title">{{item.title}}</view>
+                <view class="project-role">{{item.role}}</view>
+                </view>
+                <view class="project-desc">{{item.desc}}</view>
+            </view>
+            </view>
+        </view>
+      </view>
+
+      <!-- Tab 7: 风险排查 -->
+      <view class="content-section section-even" id="section-7">
+        <view class="section-container">
+            <view class="section-header">
+                <view class="section-title">风险记录</view>
+            </view>
+            <view class="paper-list">
+                <view class="paper-item" wx:for="{{tutor.risks}}" wx:key="id">
+                    <view class="paper-title">{{item.type}}</view>
+                    <view class="project-desc">{{item.content}}</view>
+                </view>
+            </view>
+        </view>
+      </view>
+
+    </view> <!-- End content-body -->
+    
+    <!-- Spacer for bottom bar -->
+    <view class="bottom-spacer"></view>
+
+  <!-- Bottom Bar -->
+  <view class="bottom-bar">
+    <view class="action-btn" bindtap="onCollect">
+      <image src="{{isCollected ? '/images/fav-icon-new.png' : '/images/fav-icon.png'}}" class="{{isCollected ? 'collected' : ''}}"></image>
+      <text>{{isCollected ? '已收藏' : '收藏'}}</text>
+    </view>
+    <view class="contact-btn" bindtap="onContact">立即咨询</view>
+  </view>
+</view>

@@ -1,0 +1,176 @@
+<view class="page">
+  <!-- Section: 数据权限 -->
+  <view class="section-label">数据权限</view>
+  <view class="card">
+    <view class="row" bindtap="onPersonalizeClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">个性化内容推荐</text>
+          <text class="row-desc">根据您的偏好推荐内容</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <switch checked="{{personalizeEnabled}}" bindchange="onPersonalizeChange" color="#3468b5" />
+      </view>
+    </view>
+  </view>
+
+  <!-- Section: 系统权限 -->
+  <view class="section-label">系统权限</view>
+  <view class="card">
+    <view class="row row-border" bindtap="onMicrophoneClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">麦克风权限</text>
+          <text class="row-desc">用于语音输入和语音搜索</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-status">{{microphoneStatus}}</text>
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+    <view class="row row-border" bindtap="onCameraClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">相机权限</text>
+          <text class="row-desc">用于拍摄照片和扫码</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-status">{{cameraStatus}}</text>
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+    <view class="row row-border" bindtap="onAlbumClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">相册权限</text>
+          <text class="row-desc">用于上传图片和保存图片</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-status">{{albumStatus}}</text>
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+    <view class="row row-border" bindtap="onLocationClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">位置权限</text>
+          <text class="row-desc">用于获取附近的导师信息</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-status">{{locationStatus}}</text>
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+    <view class="row row-border" bindtap="onNotificationClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">通知权限</text>
+          <text class="row-desc">接收重要消息和提醒</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-status">{{notificationStatus}}</text>
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+    <view class="row" bindtap="onMorePermissionClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">更多权限</text>
+          <text class="row-desc">查看全部系统权限</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Section: 隐私保护 -->
+  <view class="section-label">隐私保护</view>
+  <view class="card">
+    <view class="row row-border" bindtap="onAccountSecurityClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">账号安全</text>
+          <text class="row-desc">密码、绑定手机等设置</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+    <view class="row row-border" bindtap="onPrivacyPolicyClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">隐私政策</text>
+          <text class="row-desc">查看完整隐私保护政策</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+    <view class="row" bindtap="onUserAgreementClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">用户协议</text>
+          <text class="row-desc">查看服务条款和使用协议</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Section: 其他设置 -->
+  <view class="section-label">其他设置</view>
+  <view class="card">
+    <view class="row row-border" bindtap="onBlacklistClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">黑名单</text>
+          <text class="row-desc">管理已拉黑的用户</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-count">{{blacklistCount}}</text>
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+    <view class="row" bindtap="onClearCacheClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">清除缓存</text>
+          <text class="row-desc">当前缓存：{{cacheSize}}</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-action">清除</text>
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Section: 关于 -->
+  <view class="section-label">关于</view>
+  <view class="card">
+    <view class="row" bindtap="onAboutClick">
+      <view class="row-left">
+        <view class="row-content">
+          <text class="row-title">关于导查查</text>
+          <text class="row-desc">版本 {{version}}</text>
+        </view>
+      </view>
+      <view class="row-right">
+        <text class="row-arrow">></text>
+      </view>
+    </view>
+  </view>
+</view>

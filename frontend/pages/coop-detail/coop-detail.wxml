@@ -1,0 +1,120 @@
+<view class="page">
+  <!-- 项目标题区域 -->
+  <view class="header">
+    <view class="header-top">
+      <view class="project-title">{{projectInfo.title}}</view>
+      <view class="favorite-icon" bindtap="onSaveProject">
+        <text class="star">{{isFavorited ? '★' : '☆'}}</text>
+      </view>
+    </view>
+    <view class="tags">
+      <text class="tag" wx:for="{{projectInfo.tags}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="info-card">
+    <view class="info-row">
+      <text class="info-label">合作方：</text>
+      <text class="info-value">{{projectInfo.partner}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">项目时间：</text>
+      <text class="info-value">{{projectInfo.startDate}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">对接学者：</text>
+      <text class="info-value">{{projectInfo.contactCount}}</text>
+    </view>
+  </view>
+
+  <!-- 过往成果 -->
+  <view class="achievement-banner">
+    <text class="achievement-icon">✨</text>
+    <text class="achievement-text">基于此研究方向「人工智能」与百司司纳源，本项目拓展率 {{projectInfo.successRate}}，推荐优先对接</text>
+  </view>
+
+  <!-- 项目详情与合作价值 -->
+  <view class="section">
+    <view class="section-title">项目详情与合作价值</view>
+    
+    <view class="subsection">
+      <view class="subsection-title">项目简介</view>
+      <text class="subsection-content">{{projectInfo.description}}</text>
+    </view>
+
+    <view class="subsection">
+      <view class="subsection-title">合作价值</view>
+      <view class="value-list">
+        <text class="value-item" wx:for="{{projectInfo.values}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="subsection">
+      <view class="subsection-title">核心合作领</view>
+      <view class="area-list">
+        <text class="area-item" wx:for="{{projectInfo.areas}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 对接资源信息 -->
+  <view class="section">
+    <view class="section-title">对接资源信息</view>
+    
+    <view class="subsection">
+      <view class="subsection-title">该项对接导师</view>
+      
+      <view class="mentor-list">
+        <view class="mentor-card" wx:for="{{projectInfo.mentors}}" wx:key="id">
+          <view class="mentor-header">
+            <view class="mentor-avatar">
+              <text>{{item.initial}}</text>
+            </view>
+            <view class="mentor-info">
+              <view class="mentor-name">{{item.name}}</view>
+              <view class="mentor-title">{{item.title}}</view>
+              <view class="mentor-tags">
+                <text class="mentor-tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+              </view>
+            </view>
+            <view class="mentor-action">
+              <button class="contact-btn" bindtap="onContactMentor" data-id="{{item.id}}">查看并咨询</button>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 合作方简介 -->
+  <view class="section">
+    <view class="section-title">合作方简介</view>
+    <view class="subsection">
+      <text class="subsection-content">{{projectInfo.partnerIntro}}</text>
+      <view class="partner-detail" wx:if="{{projectInfo.partnerDetail}}">
+        <text class="partner-detail-text">{{projectInfo.partnerDetail}}</text>
+      </view>
+      <view class="partner-link" wx:if="{{projectInfo.partnerLink}}">
+        <text class="link-text">{{projectInfo.partnerLink}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI合作估成概况 -->
+  <view class="section">
+    <view class="section-title">AI合作估成概况</view>
+    <view class="ai-analysis">
+      <view class="analysis-item" wx:for="{{projectInfo.aiAnalysis}}" wx:key="id">
+        <view class="analysis-number">{{item.number}}</view>
+        <view class="analysis-title">{{item.title}}</view>
+        <text class="analysis-content">{{item.content}}</text>
+      </view>
+    </view>
+    <view class="analysis-footer">
+      <text class="footer-text">{{projectInfo.analysisFooter}}</text>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮 (已删除) -->
+</view>

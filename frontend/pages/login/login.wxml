@@ -1,0 +1,53 @@
+<view class="container">
+  <!-- Header Section -->
+  <view class="header">
+    <image class="header-bg" src="/images/home-bg.png" mode="aspectFill"></image>
+    <view class="header-content">
+      <view class="title">导查查</view>
+      <view class="subtitle">
+        <text>导师信息一点通</text>
+        <text class="divider">|</text>
+        <text>合作对象全知晓</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Login Form -->
+  <view class="login-form">
+    <view class="form-item">
+      <view class="label">账号 <text class="required">*</text></view>
+      <view class="input-box">
+        <input placeholder="请输入您的手机号/邮箱" placeholder-class="placeholder" bindinput="onAccountInput" />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="label">密码 <text class="required">*</text></view>
+      <view class="input-box">
+        <input password placeholder="请输入密码" placeholder-class="placeholder" bindinput="onPasswordInput" />
+      </view>
+    </view>
+
+    <button class="login-btn" bindtap="onLogin">登录</button>
+    
+    <button class="wechat-login-btn" bindtap="onBypassLogin">
+      <text>一键登录</text>
+    </button>
+
+    <view class="links">
+      <text bindtap="onSmsLogin">短信验证码登录</text>
+      <text bindtap="onForgotPassword">忘记密码？</text>
+    </view>
+
+    <view class="agreement">
+      <checkbox-group bindchange="onAgreementChange">
+        <label class="checkbox-label">
+          <checkbox value="agreed" checked="{{agreed}}" color="#2b7fff" style="transform:scale(0.7)"/>
+          <view class="agreement-text">
+            已阅读并同意<text class="link">《导查查用户协议》</text>和<text class="link">《导查查隐私政策》</text>，未注册的手机号将自动创建导查查账号
+          </view>
+        </label>
+      </checkbox-group>
+    </view>
+  </view>
+</view>
