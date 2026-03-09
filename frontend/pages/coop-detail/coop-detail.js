@@ -193,14 +193,10 @@ Page({
   // 联系导师
   onContactMentor(e) {
     const mentorId = e.currentTarget.dataset.id;
-    wx.showToast({
-      title: '查看导师详情',
-      icon: 'none'
+    // 跳转到导师详情页
+    wx.navigateTo({
+      url: `/pages/tutor-detail/tutor-detail?id=${mentorId}`
     });
-    // TODO: 跳转到导师详情页
-    // wx.navigateTo({
-    //   url: `/pages/tutor-detail/tutor-detail?id=${mentorId}`
-    // });
   },
 
   // 收藏项目

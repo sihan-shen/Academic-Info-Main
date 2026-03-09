@@ -2,8 +2,8 @@
 Page({
   data: {
     activeTab: 0,
-    tabs: ['个人简介', '社会关系', '成长脉络', '学术成果', '合作资源', '学生培养', '项目', '风险排查'],
-    tabAnchors: ['section-0', 'section-1', 'section-2', 'section-3', 'section-4', 'section-5', 'section-6', 'section-7'],
+    tabs: ['个人简介', '社会关系', '成长脉络', '学术合作', '学生培养'],
+    tabAnchors: ['section-0', 'section-1', 'section-2', 'section-3', 'section-4'],
     isSticky: false,
     headerHeight: 0,
     isCollected: false,
@@ -52,12 +52,6 @@ Page({
       projects: [
         { id: 1, title: '新一代人工智能关键技术研究', role: '负责人', desc: '国家重点研发计划，研究新一代人工智能的基础理论和关键技术。' },
         { id: 2, title: '大规模视觉理解与分析', role: '首席科学家', desc: '针对海量视频数据进行深度理解和分析，应用于智慧城市建设。' }
-      ],
-
-      // Tab 7: 风险排查 (Risk)
-      risks: [
-         { id: 1, type: '低风险', content: '近三年无学术不端记录' },
-         { id: 2, type: '正常', content: '科研经费使用规范' }
       ],
 
       // Tab 1: 社会关系 (Social)
@@ -132,7 +126,6 @@ Page({
             ],
             coops: [],
             students: [],
-            risks: [],
             socials: []
           }
         }, () => {
@@ -141,6 +134,20 @@ Page({
       }
     } else {
       this.resetSectionTops();
+    }
+  },
+
+  onItemClick(e) {
+    const { id, type } = e.currentTarget.dataset;
+    if (type === 'project' || type === 'coop') {
+      wx.navigateTo({
+        url: `/pages/coop-detail/coop-detail?id=${id}`
+      });
+    } else if (type === 'paper') {
+      wx.showToast({
+        title: '论文详情页暂未开放',
+        icon: 'none'
+      });
     }
   },
 

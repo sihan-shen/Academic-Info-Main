@@ -151,51 +151,63 @@
         </view>
       </view>
 
-      <!-- Tab 3: 学术成果 -->
+      <!-- Tab 3: 学术合作 -->
       <view class="content-section section-even" id="section-3">
+        <!-- 1. 学术合作成果总结 -->
         <view class="section-container">
             <view class="section-header">
-            <view class="section-title">主要成就</view>
+                <view class="section-title">学术合作成果</view>
             </view>
             <view class="section-text">{{tutor.achievements}}</view>
         </view>
 
+        <!-- 2. 重点项目与论文 (合并列表) -->
         <view class="section-container">
             <view class="section-header">
-            <view class="section-title">代表性论文</view>
-            </view>
-            <view class="paper-list">
-            <view class="paper-item" wx:for="{{tutor.papers}}" wx:key="id">
-                <view class="paper-title">{{item.title}}</view>
-                <view class="paper-info">
-                <text class="paper-journal">{{item.journal}}</text>
-                <text class="paper-year">{{item.year}}</text>
-                </view>
-            </view>
-            </view>
-        </view>
-      </view>
-
-      <!-- Tab 4: 合作资源 -->
-      <view class="content-section section-odd" id="section-4">
-        <view class="section-container">
-            <view class="section-header">
-            <view class="section-title">合作机构</view>
+                <view class="section-title">重点项目与论文</view>
             </view>
             <view class="project-list">
-                <view class="project-item" wx:for="{{tutor.coops}}" wx:key="id">
+                <!-- Projects -->
+                <view class="project-item" wx:for="{{tutor.projects}}" wx:key="id" bindtap="onItemClick" data-id="{{item.id}}" data-type="project">
                     <view class="project-header">
-                        <view class="project-title">{{item.name}}</view>
+                        <view class="project-title">
+                            <text class="tag-label tag-project">项目</text>
+                            {{item.title}}
+                        </view>
+                        <view class="project-role">{{item.role}}</view>
+                    </view>
+                    <view class="project-desc">{{item.desc}}</view>
+                </view>
+                
+                <!-- Coops (作为项目展示) -->
+                <view class="project-item" wx:for="{{tutor.coops}}" wx:key="id" bindtap="onItemClick" data-id="{{item.id}}" data-type="coop">
+                    <view class="project-header">
+                        <view class="project-title">
+                            <text class="tag-label tag-project">项目</text>
+                            {{item.name}}
+                        </view>
                         <view class="project-role">{{item.type}}</view>
                     </view>
                     <view class="project-desc">{{item.desc}}</view>
                 </view>
+
+                <!-- Papers -->
+                <view class="project-item" wx:for="{{tutor.papers}}" wx:key="id" bindtap="onItemClick" data-id="{{item.id}}" data-type="paper">
+                    <view class="project-header">
+                        <view class="project-title">
+                            <text class="tag-label tag-paper">论文</text>
+                            {{item.title}}
+                        </view>
+                        <view class="project-role">{{item.year}}</view>
+                    </view>
+                    <view class="project-desc">{{item.journal}}</view>
+                </view>
             </view>
         </view>
       </view>
 
-      <!-- Tab 5: 学生培养 -->
-      <view class="content-section section-even" id="section-5">
+      <!-- Tab 4: 学生培养 -->
+      <view class="content-section section-odd" id="section-4">
         <view class="section-container">
             <view class="section-header">
             <view class="section-title">指导情况</view>
@@ -213,39 +225,6 @@
                 <text class="paper-journal">{{item.dest}}</text>
                 </view>
             </view>
-            </view>
-        </view>
-      </view>
-
-      <!-- Tab 6: 项目 -->
-      <view class="content-section section-odd" id="section-6">
-        <view class="section-container">
-            <view class="section-header">
-            <view class="section-title">科研项目</view>
-            </view>
-            <view class="project-list">
-            <view class="project-item" wx:for="{{tutor.projects}}" wx:key="id">
-                <view class="project-header">
-                <view class="project-title">{{item.title}}</view>
-                <view class="project-role">{{item.role}}</view>
-                </view>
-                <view class="project-desc">{{item.desc}}</view>
-            </view>
-            </view>
-        </view>
-      </view>
-
-      <!-- Tab 7: 风险排查 -->
-      <view class="content-section section-even" id="section-7">
-        <view class="section-container">
-            <view class="section-header">
-                <view class="section-title">风险记录</view>
-            </view>
-            <view class="paper-list">
-                <view class="paper-item" wx:for="{{tutor.risks}}" wx:key="id">
-                    <view class="paper-title">{{item.type}}</view>
-                    <view class="project-desc">{{item.content}}</view>
-                </view>
             </view>
         </view>
       </view>

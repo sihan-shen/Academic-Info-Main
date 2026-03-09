@@ -643,3 +643,27 @@
   background: rgba(255, 255, 255, 0.5);
   transform: rotate(45deg);
 }
+
+/* Tag Labels */
+.tag-label {
+  display: inline-block;
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  margin-right: 12rpx;
+  vertical-align: middle;
+  font-weight: normal;
+  line-height: 1.4;
+}
+
+.tag-project {
+  background: #e6f7ff;
+  color: #1890ff;
+  border: 1rpx solid #91d5ff;
+}
+
+.tag-paper {
+  background: #f6ffed;
+  color: #52c41a;
+  border: 1rpx solid #b7eb8f;
+}
