@@ -1,89 +1,71 @@
-<view class="page">
+<view class="container">
   <!-- 合作数据概览 -->
-  <view class="section-label">合作数据概览</view>
-  <view class="stat-row">
-    <view class="stat-card">
-      <view class="stat-icon green">
-        <text>🔗</text>
+  <view class="section-title">合作数据概览</view>
+  
+  <view class="overview-cards">
+    <!-- 活跃合作领域 -->
+    <view class="overview-card">
+      <view class="card-icon">
+        <text class="icon">🔗</text>
       </view>
-      <view class="stat-text">
-        <text class="stat-sub">活跃合作领域\nTOP3</text>
+      <view class="card-content">
+        <text class="card-label">活跃合作领域</text>
+        <text class="card-subtitle">TOP3</text>
+        <view class="tags">
+          <text class="tag" wx:for="{{activeCooperationFields}}" wx:key="*this">{{item}}</text>
+        </view>
       </view>
-      <view class="stat-value-text">AI、大数据、物联网</view>
     </view>
-    <view class="stat-card" bindtap="navigateToOpportunities">
-      <view class="stat-top-row">
-        <view class="stat-icon blue">
-          <text>🤝</text>
-        </view>
-        <view class="stat-text">
-          <text class="stat-sub">潜在合作项目</text>
-        </view>
-        <text class="stat-arrow">›</text>
+
+    <!-- 潜在合作项目 -->
+    <view class="overview-card" bindtap="navigateToCoopList">
+      <view class="card-icon yellow">
+        <text class="icon">💡</text>
       </view>
-      <view class="stat-num">24<text class="stat-unit">个</text></view>
+      <view class="card-content">
+        <text class="card-label">潜在合作项目</text>
+        <text class="card-number">{{potentialProjectCount}}个</text>
+        <text class="card-arrow">›</text>
+      </view>
     </view>
   </view>
 
-  <!-- 为您推荐的合作项目 -->
-  <view class="section-label">为您推荐的合作项目</view>
+  <!-- 推荐合作项目 -->
+  <view class="section-title">为您推荐的合作项目</view>
 
-  <view class="coop-card" wx:for="{{coopList}}" wx:key="id">
-    <view class="coop-header">
-      <text class="coop-title">{{item.title}}</text>
-      <view class="coop-tags">
-        <text class="coop-tag" wx:for="{{item.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
-      </view>
-    </view>
-    <view class="coop-desc">{{item.desc}}</view>
-    <view class="coop-achievement">
-      <text class="achieve-label">过往成果：</text>{{item.achievement}}
-    </view>
-    <view class="coop-team-label">核心团队成员</view>
-    <view class="coop-members">
-      <view class="member-item" wx:for="{{item.members}}" wx:for-item="m" wx:key="name">
-        <view class="member-avatar">
-          <text>{{m.initial}}</text>
+  <view class="project-list">
+    <view class="project-card" wx:for="{{recommendedProjects}}" wx:key="id" bindtap="navigateToProjectDetail" data-id="{{item.id}}">
+      <view class="project-header">
+        <text class="project-title">{{item.title}}</text>
+        <view class="project-tags">
+          <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
         </view>
-        <text class="member-name">{{m.name}}（{{m.school}}）</text>
       </view>
-    </view>
-    <view class="coop-actions">
-      <view class="btn-detail" bindtap="onViewDetail" data-id="{{item.id}}">查看合作详情</view>
+      
+      <text class="project-desc">{{item.description}}</text>
+      
+      <view class="project-achievement" wx:if="{{item.achievement}}">
+        <text class="achievement-label">过往成果：</text>
+        <text class="achievement-text">{{item.achievement}}</text>
+      </view>
+
+      <view class="project-members">
+        <text class="members-label">核心团队成员</text>
+        <view class="members-list">
+          <view class="member-item" wx:for="{{item.members}}" wx:for-item="member" wx:key="name">
+            <view class="member-avatar">{{member.initial}}</view>
+            <text class="member-name">{{member.name}}</text>
+            <text class="member-school" wx:if="{{member.school}}">({{member.school}})</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="view-detail-btn">查看合作详情</view>
     </view>
   </view>
 
-  <!-- 学术合作关系图谱 -->
-  <view class="section-label">学术合作关系图谱</view>
-  <view class="graph-card">
-    <view class="graph-zoom">
-      <text>🔍</text>
-    </view>
-    <view class="graph-area">
-      <view class="node node-a" style="left:60rpx;top:40rpx;">
-        <view class="node-dot dot-blue"></view>
-        <text class="node-label">导师A</text>
-      </view>
-      <view class="node node-b" style="right:80rpx;top:30rpx;">
-        <view class="node-dot dot-orange"></view>
-        <text class="node-label">导师B</text>
-      </view>
-      <view class="node node-center" style="left:50%;top:50%;transform:translate(-50%,-50%);">
-        <view class="node-dot dot-blue-lg"></view>
-        <text class="node-label-center">您</text>
-      </view>
-      <view class="node node-c" style="left:50rpx;bottom:50rpx;">
-        <view class="node-dot dot-green"></view>
-        <text class="node-label">团队C</text>
-      </view>
-      <view class="node node-d" style="right:70rpx;bottom:50rpx;">
-        <view class="node-dot dot-red"></view>
-        <text class="node-label">机构D</text>
-      </view>
-      <!-- 连线用 canvas 模拟 -->
-      <canvas canvas-id="graphCanvas" class="graph-canvas"></canvas>
-    </view>
-    <view class="graph-hint">点击节点查看详情，支持缩放查看</view>
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{isLoading}}">
+    <text class="loading-text">加载中...</text>
   </view>
-
 </view>

@@ -1,79 +1,83 @@
+// pages/coop-mining/coop-mining.js
+const apiConfig = require('../../config/api.js');
+
 Page({
   data: {
-    coopList: [
-      {
-        id: 1,
-        title: '跨校AI联合实验室',
-        tags: ['人工智能', '跨校合作'],
-        desc: '清华、北大、浙大联合开展深度学习前沿研究',
-        achievement: '已发表顶会论文15篇，获国家级项目资助',
-        members: [
-          { name: '张明华', school: '清华', initial: '张' },
-          { name: '李晓芳', school: '北大', initial: '李' },
-          { name: '王建国', school: '浙大', initial: '王' }
-        ]
+    activeCooperationFields: [],
+    potentialProjectCount: 0,
+    recommendedProjects: [],
+    isLoading: true
+  },
+
+  onLoad() {
+    console.log('[CoopMining] 页面加载');
+    this.loadCoopOverview();
+    this.loadRecommendations();
+  },
+
+  // 加载合作数据概览
+  loadCoopOverview() {
+    wx.request({
+      url: `${apiConfig.BASE_URL}/api/v1/coop/stats/overview`,
+      method: 'GET',
+      success: (res) => {
+        console.log('[CoopMining] 概览接口返回:', res.data);
+        if (res.data && res.data.success) {
+          const data = res.data.data;
+          const activeFields = (data.activeFields || []).map(field => field.name);
+          
+          this.setData({
+            activeCooperationFields: activeFields.slice(0, 3),
+            potentialProjectCount: data.potentialProjectCount || 0,
+            isLoading: false
+          });
+          
+          console.log('[CoopMining] 设置数据:', {
+            activeCooperationFields: activeFields.slice(0, 3),
+            potentialProjectCount: data.potentialProjectCount || 0
+          });
+        }
       },
-      {
-        id: 2,
-        title: '智能制造产学研合作',
-        tags: ['产学研', '技术转化'],
-        desc: '高校与华为、阿里巴巴等企业开展智能制造技术研发',
-        achievement: '技术转化5项，专利授权20+件',
-        members: [
-          { name: '陈思远', school: '上交', initial: '陈' },
-          { name: '刘强', school: '复旦', initial: '刘' }
-        ]
+      fail: (err) => {
+        console.error('[CoopMining] 加载概览失败:', err);
+        this.setData({ isLoading: false });
       }
-    ]
+    });
   },
 
-  onReady() {
-    this.drawGraph();
+  // 加载推荐项目
+  loadRecommendations() {
+    wx.request({
+      url: `${apiConfig.BASE_URL}/api/v1/coop/recommendations?limit=10`,
+      method: 'GET',
+      success: (res) => {
+        console.log('[CoopMining] 推荐接口返回:', res.data);
+        if (res.data && res.data.success) {
+          const projects = res.data.data.list || [];
+          this.setData({
+            recommendedProjects: projects
+          });
+          console.log('[CoopMining] 设置推荐项目:', projects.length);
+        }
+      },
+      fail: (err) => {
+        console.error('[CoopMining] 加载推荐失败:', err);
+      }
+    });
   },
 
-  drawGraph() {
-    const ctx = wx.createCanvasContext('graphCanvas', this);
-    const query = wx.createSelectorQuery().in(this);
-    query.select('.graph-area').boundingClientRect(rect => {
-      if (!rect) return;
-      const w = rect.width;
-      const h = rect.height;
-      const cx = w / 2;
-      const cy = h / 2;
-
-      const nodes = [
-        { x: w * 0.12, y: h * 0.15 },
-        { x: w * 0.82, y: h * 0.12 },
-        { x: w * 0.10, y: h * 0.78 },
-        { x: w * 0.83, y: h * 0.78 }
-      ];
-
-      ctx.setStrokeStyle('rgba(255,255,255,0.15)');
-      ctx.setLineWidth(1);
-      nodes.forEach(n => {
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.lineTo(n.x, n.y);
-        ctx.stroke();
-      });
-
-      ctx.draw();
-    }).exec();
+  // 查看项目详情
+  navigateToProjectDetail(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/coop-detail/coop-detail?id=${id}`
+    });
   },
-
 
   // 跳转到潜在合作项目列表
   navigateToOpportunities() {
     wx.navigateTo({
       url: '/pages/coop-opportunities/coop-opportunities'
-    });
-  },
-
-  // 查看项目详情
-  onViewDetail(e) {
-    const projectId = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: `/pages/coop-detail/coop-detail?id=${projectId}`
     });
   }
 });

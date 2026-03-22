@@ -1,69 +1,36 @@
 // pages/tutor-detail/tutor-detail.js
+const apiConfig = require('../../config/api.js');
+
 Page({
   data: {
     activeTab: 0,
-    tabs: ['个人简介', '社会关系', '成长脉络', '学术合作', '学生培养'],
-    tabAnchors: ['section-0', 'section-1', 'section-2', 'section-3', 'section-4'],
+    networkNodes: [],
+    networkEdges: [],
+    networkLines: [],
+    networkCurves: [],
+    networkLoading: false,
+    centerNode: null,
+    centerAnim: '',
+    collaboratorNodes: [],
+    collaboratorsList: [],
+    showTooltip: false,
+    tooltipX: 0,
+    tooltipY: 0,
+    tooltipData: {},
+    isNetworkExpanded: false,
+    expandedNetworkCurves: [],
+    expandedCollaboratorNodes: [],
+    tabs: ['个人简介', '社会关系', '成长脉络', '学术成果', '合作资源', '学生培养', '项目', '风险排查'],
+    tabAnchors: ['section-0', 'section-1', 'section-2', 'section-3', 'section-4', 'section-5', 'section-6', 'section-7'],
     isSticky: false,
     headerHeight: 0,
     isCollected: false,
-    tutor: {
-      id: 1,
-      name: '张明华',
-      avatar: '/images/tutor-zhang.png',
-      school: '清华大学',
-      department: '计算机科学与技术系',
-      tags: ['985博导', '中国科学院院士', '人工智能'],
-      // Tab 0: 个人简介
-      bio: '张明华，清华大学计算机科学与技术系教授，博士生导师，中国科学院院士。长期从事人工智能、机器学习、计算机视觉等领域的研究工作。发表顶级论文150+篇，主持国家重点研发计划3项。',
-      direction: '人工智能、机器学习、计算机视觉、深度学习',
-      // Tab 2: 成长脉络
-      growthPath: [
-        { year: '2020-至今', content: '清华大学计算机科学与技术系教授', type: '工作经历' },
-        { year: '2019', content: '获国家杰出青年科学基金', type: '荣誉' },
-        { year: '2015-2020', content: '清华大学计算机科学与技术系副教授', type: '工作经历' },
-        { year: '2010-2015', content: '清华大学计算机科学与技术系讲师', type: '工作经历' },
-        { year: '2010', content: '获斯坦福大学计算机科学博士学位', type: '教育经历' },
-        { year: '2006', content: '获清华大学计算机科学硕士学位', type: '教育经历' }
-      ],
-      
-      // Tab 3: 学术成果 (Achievements)
-      achievements: '发表顶级论文150+篇，引用次数超过10000次。获得国家自然科学二等奖1项，教育部自然科学一等奖2项。',
-      papers: [
-        { id: 1, title: 'Deep Residual Learning for Image Recognition', journal: 'CVPR', year: '2016' },
-        { id: 2, title: 'Attention Is All You Need', journal: 'NIPS', year: '2017' },
-        { id: 3, title: 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding', journal: 'NAACL', year: '2019' }
-      ],
-
-      // Tab 4: 合作资源 (Cooperation)
-      coops: [
-        { id: 1, name: 'Google AI Lab', type: '企业合作', desc: '联合开展深度学习模型研究' },
-        { id: 2, name: '微软亚洲研究院', type: '学术合作', desc: '共同举办学术研讨会' }
-      ],
-
-      // Tab 5: 学生培养 (Students)
-      guidance: '已指导博士生30余名，硕士生50余名。多名学生获得国家奖学金、优秀毕业生称号。',
-      students: [
-        { id: 1, name: '李某某', year: '2018级博士', dest: '阿里达摩院' },
-        { id: 2, name: '王某某', year: '2019级硕士', dest: '腾讯AI Lab' }
-      ],
-
-      // Tab 6: 项目 (Projects)
-      projects: [
-        { id: 1, title: '新一代人工智能关键技术研究', role: '负责人', desc: '国家重点研发计划，研究新一代人工智能的基础理论和关键技术。' },
-        { id: 2, title: '大规模视觉理解与分析', role: '首席科学家', desc: '针对海量视频数据进行深度理解和分析，应用于智慧城市建设。' }
-      ],
-
-      // Tab 1: 社会关系 (Social)
-      service: '中国人工智能学会副理事长，NeurIPS、ICML等国际会议领域主席。',
-      socials: [
-        { id: 1, role: '副理事长', org: '中国人工智能学会' },
-        { id: 2, role: '领域主席', org: 'NeurIPS' }
-      ]
-    }
+    isLoading: false,
+    tutor: null
   },
 
   onLoad(options) {
+    this.tutorIdFromRoute = options.id || null;
     this.sectionTops = [];
     this.isAutoScrolling = false;
     this.autoScrollTimer = null;
@@ -76,77 +43,488 @@ Page({
         this.windowHeight = 600; // Fallback
     }
 
+    // 从后端获取导师详情 - 使用真实的后端API
     if (options.id) {
-      // Fetch tutor details by id
-      // Mock data for now
-      if (options.id === '2') {
-        this.setData({
-          tutor: {
-            id: 2,
-            name: '李晓芳',
-            avatar: '/images/tutor-li.png',
-            school: '北京大学',
-            department: '信息科学技术学院',
-            tags: ['国家杰青', '院长', '机器学习'],
-            bio: '李晓芳，北京大学信息科学技术学院院长，教授，博士生导师。获国家杰出青年基金资助。主要研究方向为机器学习、数据挖掘。',
-            direction: '机器学习、数据挖掘、大数据分析',
-            achievements: '在ICML、KDD等会议发表论文80余篇。获国家科技进步二等奖。',
-            service: 'ACM SIGKDD China Chapter Chair。',
-            guidance: '指导博士生20余名，多人在BAT等大厂任职。',
-            papers: [
-                { id: 1, title: 'Large-scale Machine Learning', journal: 'KDD', year: '2018' },
-                { id: 2, title: 'Data Mining in Social Networks', journal: 'ICDE', year: '2020' }
-            ],
-            projects: [],
-            coops: [],
-            students: [],
-            risks: [],
-            socials: []
-          }
-        }, () => {
-          this.resetSectionTops();
-        });
-      } else if (options.id === '3') {
-        this.setData({
-          tutor: {
-            id: 3,
-            name: '王建国',
-            avatar: '/images/tutor-wang.png',
-            school: '浙江大学',
-            department: '控制科学与工程学院',
-            tags: ['国家杰青', '博导', '智能控制'],
-            bio: '王建国，浙江大学控制科学与工程学院副院长，教授。研究领域包括智能控制、工业自动化。',
-            direction: '智能控制、工业互联网、自动化系统',
-            achievements: '授权发明专利40余项。',
-            service: 'IEEE Transactions on Industrial Electronics Associate Editor。',
-            guidance: '指导研究生获得省优秀硕士论文。',
-            papers: [],
-            projects: [
-                { id: 1, title: '智能工厂控制系统', role: '负责人', desc: '研发新一代智能工厂分布式控制系统。' }
-            ],
-            coops: [],
-            students: [],
-            socials: []
-          }
-        }, () => {
-          this.resetSectionTops();
-        });
-      }
+      this.fetchTutorDetail(options.id);
     } else {
-      this.resetSectionTops();
+      // 如果没有ID，显示空状态
+      this.setData({
+        tutor: {
+          name: '导师不存在',
+          bio: '请从搜索页面选择有效的导师',
+          avatar: '/images/default-avatar.png'
+        }
+      });
     }
   },
 
-  onItemClick(e) {
-    const { id, type } = e.currentTarget.dataset;
-    if (type === 'project' || type === 'coop') {
-      wx.navigateTo({
-        url: `/pages/coop-detail/coop-detail?id=${id}`
+  // 获取导师详情
+  fetchTutorDetail(tutorId) {
+    if (!tutorId || !apiConfig.BASE_URL) {
+      return;
+    }
+
+    this.setData({ isLoading: true });
+
+    if (apiConfig.DEBUG) {
+      console.log('[Tutor] 获取导师详情, id:', tutorId);
+    }
+
+    wx.request({
+      url: `${apiConfig.BASE_URL}/api/v1/tutor/detail/${tutorId}`,
+      method: 'GET',
+      timeout: 10000,
+      success: (res) => {
+        if (res.statusCode === 200 && res.data && res.data.success && res.data.data) {
+          const tutor = res.data.data;
+          
+          // 格式化导师数据以适应页面显示
+          const formattedTutor = {
+            id: tutor.id,
+            name: tutor.name,
+            avatar: tutor.avatar || '/images/default-avatar.png',
+            school: tutor.school || '',
+            department: tutor.department || '',
+            tags: tutor.tags || [],
+            bio: tutor.bio || '',
+            direction: tutor.research_direction || '',
+            achievements: tutor.achievements_summary || '',
+            service: tutor.service || '',
+            guidance: tutor.guidance || '',
+            papers: tutor.papers || [],
+            projects: tutor.projects || [],
+            coops: tutor.coops || [],
+            students: tutor.students || [],
+            risks: tutor.risks || [],
+            socials: tutor.socials || [],
+            growthPath: tutor.growthPath || []
+          };
+
+          this.setData({ 
+            tutor: formattedTutor,
+            isLoading: false
+          }, () => {
+            this.resetSectionTops();
+          });
+
+          // 获取图谱数据
+          this.fetchNetworkGraph(tutorId);
+        } else {
+          console.warn('[Tutor] 获取导师详情失败:', res.data);
+          this.setData({ isLoading: false });
+        }
+      },
+      fail: (err) => {
+        console.error('[Tutor] 获取导师详情失败:', err);
+        this.setData({ isLoading: false });
+      }
+    });
+  },
+
+  fetchNetworkGraph(tutorId) {
+    if (!tutorId) {
+      this.setData({ networkLoading: false });
+      return;
+    }
+    
+    this.setData({ networkLoading: true });
+    
+    wx.request({
+      url: `${apiConfig.BASE_URL}/api/v1/tutor/network/${tutorId}`,
+      method: 'GET',
+      timeout: 10000,
+      success: (res) => {
+        if (res.statusCode === 200 && res.data && res.data.success && res.data.data) {
+          const d = res.data.data;
+          const center = d.center;
+          const collaborators = d.collaborators || [];
+          
+          if (collaborators.length > 0) {
+            // 处理节点数据 - 现代专业版布局
+            const processedData = this.processNetworkLayout(center, collaborators);
+            
+            this.setData({
+              centerNode: processedData.center,
+              centerAnim: 'anim-enter',
+              collaboratorNodes: processedData.collaborators,
+              networkCurves: processedData.curves,
+              networkLines: processedData.lines,
+              networkNodes: [processedData.center, ...processedData.collaborators],
+              collaboratorsList: collaborators,
+              networkLoading: false,
+              showTooltip: false,
+              tooltipData: {}
+            });
+          } else {
+            this.setData({
+              centerNode: null,
+              collaboratorNodes: [],
+              networkLines: [],
+              networkNodes: [],
+              collaboratorsList: [],
+              networkLoading: false
+            });
+          }
+        } else {
+          console.warn('[Network] 无有效数据:', res.data);
+          this.setData({ networkLoading: false });
+        }
+      },
+      fail: (err) => {
+        console.error('[Network] 请求失败:', err);
+        this.setData({ networkLoading: false });
+      }
+    });
+  },
+
+  // 处理网络布局 - 现代专业版
+  processNetworkLayout(center, collaborators) {
+    const count = collaborators.length;
+    const positions = this.calculateNodePositions(count);
+    
+    // 为合作者分配位置、颜色和动画类
+    const colorClasses = ['peer-indigo', 'peer-violet', 'peer-blue', 'peer-cyan', 'peer-teal'];
+    const positionedCollaborators = collaborators.map((c, i) => ({
+      ...c,
+      pos: positions[i] || { x: 50, y: 50 },
+      colorClass: colorClasses[i % colorClasses.length],
+      animClass: `anim-delay-${i % 5}`
+    }));
+    
+    // 计算连接线（CSS直线）
+    const curves = positionedCollaborators.map(c => {
+      const line = this.calculateConnectionLine(50, 50, c.pos.x, c.pos.y);
+      return {
+        x1: line.x1,
+        y1: line.y1,
+        length: line.length,
+        angle: line.angle,
+        targetId: c.id
+      };
+    });
+    
+    // 同时保留直线数据用于备用
+    const lines = positionedCollaborators.map(c => {
+      const dx = c.pos.x - 50;
+      const dy = c.pos.y - 50;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+      
+      return {
+        length: distance,
+        angle: angle,
+        targetId: c.id
+      };
+    });
+    
+    return {
+      center: {
+        id: center.id,
+        name: center.name,
+        avatar: center.avatar,
+        school: center.school,
+        type: 'center'
+      },
+      collaborators: positionedCollaborators,
+      curves: curves,
+      lines: lines
+    };
+  },
+
+  // 计算连接线（使用CSS直线，从中心到合作者）
+  calculateConnectionLine(x1, y1, x2, y2) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const length = Math.sqrt(dx * dx + dy * dy);
+    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+    
+    return {
+      x1: x1,
+      y1: y1,
+      length: length,
+      angle: angle
+    };
+  },
+
+  // 计算节点位置 - 优化布局，增加间距
+  calculateNodePositions(count) {
+    const positions = [];
+
+    if (count === 1) {
+      positions.push({ x: 78, y: 50 });
+    } else if (count === 2) {
+      // 水平对称，更大间距
+      positions.push({ x: 15, y: 50 });
+      positions.push({ x: 85, y: 50 });
+    } else if (count === 3) {
+      // 三角布局，更分散
+      positions.push({ x: 50, y: 12 });
+      positions.push({ x: 16, y: 82 });
+      positions.push({ x: 84, y: 82 });
+    } else if (count === 4) {
+      // 四角布局，更靠边缘
+      positions.push({ x: 50, y: 10 });
+      positions.push({ x: 90, y: 50 });
+      positions.push({ x: 50, y: 90 });
+      positions.push({ x: 10, y: 50 });
+    } else if (count === 5) {
+      // 五角星布局，增大半径
+      const radius = 38;
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * 2 * Math.PI / 5) - Math.PI / 2;
+        positions.push({
+          x: 50 + radius * Math.cos(angle),
+          y: 50 + radius * Math.sin(angle)
+        });
+      }
+    } else if (count === 6) {
+      // 6个节点，均匀分布
+      const radius = 38;
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * 2 * Math.PI - Math.PI / 2;
+        positions.push({
+          x: 50 + radius * Math.cos(angle),
+          y: 50 + radius * Math.sin(angle)
+        });
+      }
+    } else if (count <= 8) {
+      // 7-8个节点，增大半径
+      const radius = 39;
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * 2 * Math.PI - Math.PI / 2;
+        positions.push({
+          x: 50 + radius * Math.cos(angle),
+          y: 50 + radius * Math.sin(angle)
+        });
+      }
+    } else {
+      // 8+个节点，最大半径
+      const radius = 40;
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * 2 * Math.PI - Math.PI / 2;
+        positions.push({
+          x: 50 + radius * Math.cos(angle),
+          y: 50 + radius * Math.sin(angle)
+        });
+      }
+    }
+
+    return positions;
+  },
+
+  // 节点长按显示详情 tooltip
+  onNodeLongPress(e) {
+    const id = e.currentTarget.dataset.id;
+    const index = e.currentTarget.dataset.index;
+    const type = e.currentTarget.dataset.type;
+    
+    // 获取触摸位置
+    const touch = e.touches[0];
+    const tooltipX = touch.clientX - 80;
+    const tooltipY = touch.clientY - 100;
+    
+    if (type === 'center') {
+      this.setData({
+        showTooltip: true,
+        tooltipX: tooltipX,
+        tooltipY: tooltipY,
+        tooltipData: {
+          name: this.data.centerNode?.name || '导师',
+          papers: this.data.centerNode?.papers || '多篇',
+          projects: '点击查看详情',
+          years: ''
+        }
       });
-    } else if (type === 'paper') {
+    } else if (index !== undefined) {
+      const collaborator = this.data.collaboratorNodes[index];
+      if (collaborator) {
+        this.setData({
+          showTooltip: true,
+          tooltipX: tooltipX,
+          tooltipY: tooltipY,
+          tooltipData: {
+            name: collaborator.name,
+            papers: collaborator.papers || 0,
+            projects: Array.isArray(collaborator.projects) ? collaborator.projects.length : 0,
+            years: '2020-2024'
+          }
+        });
+      }
+    }
+    
+    // 3秒后隐藏
+    setTimeout(() => {
+      this.setData({ showTooltip: false });
+    }, 3000);
+  },
+
+  // 点击图谱空白处展开
+  onNetworkBackgroundTap(e) {
+    // 如果点击的是节点，不触发背景点击
+    if (e.target.dataset.type || e.target.dataset.id) {
+      return;
+    }
+    
+    // 展开网络图谱
+    this.expandNetwork();
+  },
+
+  // 展开网络图谱详情
+  expandNetwork() {
+    const { networkCurves, collaboratorNodes, collaboratorsList } = this.data;
+    
+    // 为展开视图计算更大的布局
+    const expandedNodes = collaboratorNodes.map((node, index) => ({
+      ...node,
+      pos: this.calculateExpandedPosition(index, collaboratorNodes.length)
+    }));
+    
+    // 重新计算展开视图的连接线
+    const expandedCurves = expandedNodes.map(c => {
+      const line = this.calculateConnectionLine(50, 50, c.pos.x, c.pos.y);
+      return {
+        x1: line.x1,
+        y1: line.y1,
+        length: line.length,
+        angle: line.angle
+      };
+    });
+    
+    this.setData({
+      isNetworkExpanded: true,
+      expandedNetworkCurves: expandedCurves,
+      expandedCollaboratorNodes: expandedNodes
+    });
+    
+    wx.showToast({
+      title: '查看合作详情',
+      icon: 'none',
+      duration: 1500
+    });
+  },
+
+  // 计算展开视图的位置（更大更分散的布局）
+  calculateExpandedPosition(index, total) {
+    const positions = [];
+
+    if (total === 1) {
+      positions.push({ x: 78, y: 50 });
+    } else if (total === 2) {
+      // 左右更分散
+      positions.push({ x: 10, y: 50 });
+      positions.push({ x: 90, y: 50 });
+    } else if (total === 3) {
+      // 三角分布，更靠边缘
+      positions.push({ x: 50, y: 8 });
+      positions.push({ x: 12, y: 86 });
+      positions.push({ x: 88, y: 86 });
+    } else if (total === 4) {
+      // 四角分布，更大间距
+      positions.push({ x: 50, y: 6 });
+      positions.push({ x: 94, y: 50 });
+      positions.push({ x: 50, y: 94 });
+      positions.push({ x: 6, y: 50 });
+    } else if (total === 5) {
+      // 五角分布，更大半径
+      const radius = 44;
+      for (let i = 0; i < 5; i++) {
+        const angle = (i * 2 * Math.PI / 5) - Math.PI / 2;
+        positions.push({
+          x: 50 + radius * Math.cos(angle),
+          y: 50 + radius * Math.sin(angle)
+        });
+      }
+    } else if (total === 6) {
+      // 6个节点
+      const radius = 44;
+      for (let i = 0; i < total; i++) {
+        const angle = (i / total) * 2 * Math.PI - Math.PI / 2;
+        positions.push({
+          x: 50 + radius * Math.cos(angle),
+          y: 50 + radius * Math.sin(angle)
+        });
+      }
+    } else if (total <= 8) {
+      // 7-8个节点
+      const radius = 45;
+      for (let i = 0; i < total; i++) {
+        const angle = (i / total) * 2 * Math.PI - Math.PI / 2;
+        positions.push({
+          x: 50 + radius * Math.cos(angle),
+          y: 50 + radius * Math.sin(angle)
+        });
+      }
+    } else {
+      // 8+个节点，最大分布
+      const radius = 46;
+      for (let i = 0; i < total; i++) {
+        const angle = (i / total) * 2 * Math.PI - Math.PI / 2;
+        positions.push({
+          x: 50 + radius * Math.cos(angle),
+          y: 50 + radius * Math.sin(angle)
+        });
+      }
+    }
+
+    return positions[index] || { x: 50, y: 50 };
+  },
+
+  // 关闭展开的图谱
+  onCloseExpandedNetwork() {
+    this.setData({
+      isNetworkExpanded: false
+    });
+  },
+
+  // 阻止事件冒泡（点击容器不关闭）
+  onExpandedContainerTap(e) {
+    e.stopPropagation();
+  },
+
+  // 点击展开视图中的节点
+  onExpandedNodeTap(e) {
+    const id = e.currentTarget.dataset.id;
+    if (id) {
+      // 先关闭展开视图
+      this.setData({ isNetworkExpanded: false });
+      
+      // 跳转到导师详情
+      setTimeout(() => {
+        wx.navigateTo({
+          url: `/pages/tutor-detail/tutor-detail?id=${id}`
+        });
+      }, 300);
+    }
+  },
+
+  onGraphNodeTap(e) {
+    const id = e.currentTarget.dataset.id;
+    const type = e.currentTarget.dataset.type;
+    
+    // 点击中心节点不跳转，只提示
+    if (type === 'center') {
       wx.showToast({
-        title: '论文详情页暂未开放',
-        icon: 'none'
+        title: '当前导师',
+        icon: 'none',
+        duration: 1000
+      });
+      return;
+    }
+    
+    // 点击合作者节点跳转
+    if (id && id !== this.data.tutor?.id) {
+      wx.navigateTo({
+        url: `/pages/tutor-detail/tutor-detail?id=${id}`,
+        success: () => {
+          console.log('[Network] 跳转到导师:', id);
+        },
+        fail: (err) => {
+          console.error('[Network] 跳转失败:', err);
+          wx.showToast({
+            title: '跳转失败',
+            icon: 'none'
+          });
+        }
       });
     }
   },
@@ -274,10 +652,38 @@ Page({
   },
 
   onCollect() {
-    this.setData({ isCollected: !this.data.isCollected });
-    wx.showToast({
-      title: this.data.isCollected ? '已收藏' : '已取消收藏',
-      icon: 'none'
+    const tutorId = this.data.tutorId;
+    if (!tutorId) {
+      wx.showToast({ title: '导师ID不存在', icon: 'none' });
+      return;
+    }
+
+    wx.request({
+      url: `${apiConfig.BASE_URL}/api/v1/user/favorite/tutor/${tutorId}`,
+      method: 'POST',
+      header: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${wx.getStorageSync('token') || ''}`
+      },
+      success: (res) => {
+        if (res.data && res.data.success) {
+          const action = res.data.data.action;
+          this.setData({ isCollected: action === 'collected' });
+          wx.showToast({
+            title: action === 'collected' ? '已收藏' : '已取消收藏',
+            icon: 'none'
+          });
+        } else {
+          wx.showToast({
+            title: res.data?.message || '操作失败',
+            icon: 'none'
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('[TutorDetail] 收藏操作失败:', err);
+        wx.showToast({ title: '网络错误', icon: 'none' });
+      }
     });
   },
 

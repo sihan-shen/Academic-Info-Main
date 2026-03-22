@@ -40,74 +40,32 @@ router = APIRouter(
 )
 async def search_tutors(
     request: Request,
-    # 基础查询参数
     keyword: Optional[str] = Query(None, description="搜索关键词（姓名/研究方向/院校/专业）"),
     name: Optional[str] = Query(None, description="导师姓名（模糊匹配）"),
     school: Optional[str] = Query(None, description="学校名称（模糊匹配）"),
     department: Optional[str] = Query(None, description="院系名称（模糊匹配）"),
-    
-    # 高级筛选参数
     research_direction: Optional[str] = Query(None, description="研究方向（模糊匹配）"),
     title: Optional[str] = Query(None, description="职称（模糊匹配）"),
-    recruitment_type: Optional[RecruitmentType] = Query(None, description="招生类型：academic(学硕)/professional(专硕)/both(都招)"),
+    recruitment_type: Optional[RecruitmentType] = Query(None, description="招生类型"),
     has_projects: Optional[bool] = Query(None, description="是否有课题/项目"),
     has_funding: Optional[bool] = Query(None, description="是否有科研经费"),
-    tags: Optional[str] = Query(None, description="标签列表（逗号分隔，任意匹配）"),
-    
-    # 论文和项目筛选
+    tags: Optional[str] = Query(None, description="标签列表（逗号分隔）"),
     min_papers: Optional[int] = Query(None, ge=0, description="最少论文数量"),
     max_papers: Optional[int] = Query(None, ge=0, description="最多论文数量"),
     min_projects: Optional[int] = Query(None, ge=0, description="最少项目数量"),
     max_projects: Optional[int] = Query(None, ge=0, description="最多项目数量"),
-    
-    # 分页参数
     page: int = Query(1, ge=1, description="页码"),
     page_size: int = Query(10, ge=1, le=100, description="每页数量"),
-    
-    # 排序参数
     sort_by: SortField = Query(SortField.CREATED_AT, description="排序字段"),
     sort_order: SortOrder = Query(SortOrder.DESC, description="排序方向"),
-    
-    # 用户认证（可选）
     current_user: Optional[User] = Depends(get_current_user)
 ):
     """
     导师高级查询接口
-    
-    支持：
-    1. 基础模糊查询：姓名、院校、专业
-    2. 高级筛选：研究方向、职称、招生类型、是否有课题等
-    3. 分页和排序
-    
-    Args:
-        request: 请求对象
-        keyword: 搜索关键词
-        name: 导师姓名
-        school: 学校名称
-        department: 院系名称
-        research_direction: 研究方向
-        title: 职称
-        recruitment_type: 招生类型
-        has_projects: 是否有课题
-        has_funding: 是否有科研经费
-        tags: 标签列表
-        min_papers: 最少论文数
-        max_papers: 最多论文数
-        min_projects: 最少项目数
-        max_projects: 最多项目数
-        page: 页码
-        page_size: 每页数量
-        sort_by: 排序字段
-        sort_order: 排序方向
-        current_user: 当前用户（可选）
-    
-    Returns:
-        导师列表
     """
     try:
         db = get_db()
         
-        # 构建查询条件
         query = {
             "$or": [
                 {"is_deleted": {"$exists": False}},
@@ -115,7 +73,6 @@ async def search_tutors(
             ]
         }
         
-        # 基础关键词查询（搜索姓名、研究方向、学校、院系）
         if keyword:
             query["$and"] = query.get("$and", [])
             query["$and"].append({
@@ -127,31 +84,24 @@ async def search_tutors(
                 ]
             })
         
-        # 姓名模糊查询
         if name:
             query["name"] = {"$regex": name, "$options": "i"}
         
-        # 学校模糊查询
         if school:
             query["school_name"] = {"$regex": school, "$options": "i"}
         
-        # 院系模糊查询
         if department:
             query["department_name"] = {"$regex": department, "$options": "i"}
         
-        # 研究方向模糊查询
         if research_direction:
             query["research_direction"] = {"$regex": research_direction, "$options": "i"}
         
-        # 职称筛选（支持模糊匹配）
         if title:
             query["title"] = {"$regex": title, "$options": "i"}
         
-        # 招生类型筛选
         if recruitment_type:
             query["recruitment_type"] = recruitment_type.value
         
-        # 是否有课题/项目
         if has_projects is not None:
             if has_projects:
                 query["project_count"] = {"$gt": 0}
@@ -160,17 +110,14 @@ async def search_tutors(
                 query["$or"].append({"project_count": {"$exists": False}})
                 query["$or"].append({"project_count": 0})
         
-        # 是否有科研经费
         if has_funding is not None:
             query["has_funding"] = has_funding
         
-        # 标签筛选（任意匹配）
         if tags:
             tag_list = [t.strip() for t in tags.split(",") if t.strip()]
             if tag_list:
                 query["tags"] = {"$in": tag_list}
         
-        # 论文数量筛选
         if min_papers is not None or max_papers is not None:
             paper_query = {}
             if min_papers is not None:
@@ -180,7 +127,6 @@ async def search_tutors(
             if paper_query:
                 query["paper_count"] = paper_query
         
-        # 项目数量筛选
         if min_projects is not None or max_projects is not None:
             project_query = {}
             if min_projects is not None:
@@ -190,24 +136,17 @@ async def search_tutors(
             if project_query:
                 query["project_count"] = project_query
         
-        # 获取总数
         total = await db.tutors.count_documents(query)
-        
-        # 计算总页数
         total_pages = math.ceil(total / page_size) if total > 0 else 0
         
-        # 构建排序条件
         sort_direction = -1 if sort_order == SortOrder.DESC else 1
         sort_field = sort_by.value
         
-        # 计算分页
         skip = (page - 1) * page_size
         
-        # 获取数据
         tutors_cursor = db.tutors.find(query).sort(sort_field, sort_direction).skip(skip).limit(page_size)
         tutors = await tutors_cursor.to_list(length=page_size)
         
-        # 转换为响应模型
         tutor_list = []
         for tutor in tutors:
             tutor_brief = {
@@ -228,9 +167,8 @@ async def search_tutors(
         
         api_logger.info(
             f"导师高级查询成功\n"
-            f"查询条件: keyword={keyword}, name={name}, school={school}, department={department}\n"
-            f"高级筛选: research_direction={research_direction}, title={title}, recruitment_type={recruitment_type}\n"
-            f"分页: page={page}, page_size={page_size}, sort_by={sort_by}, sort_order={sort_order}\n"
+            f"条件: keyword={keyword}, name={name}, school={school}\n"
+            f"分页: page={page}, page_size={page_size}\n"
             f"结果: {len(tutor_list)}/{total}\n"
             f"Request ID: {request.state.request_id}"
         )
@@ -270,22 +208,10 @@ async def get_filter_options(
     request: Request,
     school: Optional[str] = Query(None, description="学校筛选（获取该学校的院系列表）")
 ):
-    """
-    获取筛选选项接口
-    
-    返回可用的筛选选项，用于前端展示筛选条件
-    
-    Args:
-        request: 请求对象
-        school: 学校名称（可选，用于获取该学校的院系列表）
-    
-    Returns:
-        筛选选项
-    """
+    """获取筛选选项接口"""
     try:
         db = get_db()
         
-        # 获取学校列表（去重）
         schools_cursor = db.tutors.distinct("school_name", {
             "$or": [
                 {"is_deleted": {"$exists": False}},
@@ -293,9 +219,8 @@ async def get_filter_options(
             ]
         })
         schools = await schools_cursor
-        schools = sorted([s for s in schools if s])  # 过滤空值并排序
+        schools = sorted([s for s in schools if s])
         
-        # 获取院系列表
         department_query = {
             "$or": [
                 {"is_deleted": {"$exists": False}},
@@ -309,7 +234,6 @@ async def get_filter_options(
         departments = await departments_cursor
         departments = sorted([d for d in departments if d])
         
-        # 获取职称列表
         titles_cursor = db.tutors.distinct("title", {
             "$or": [
                 {"is_deleted": {"$exists": False}},
@@ -319,7 +243,6 @@ async def get_filter_options(
         titles = await titles_cursor
         titles = sorted([t for t in titles if t])
         
-        # 获取研究方向列表（取前50个最常见的）
         research_directions_pipeline = [
             {
                 "$match": {
@@ -330,12 +253,7 @@ async def get_filter_options(
                     "research_direction": {"$exists": True, "$ne": None, "$ne": ""}
                 }
             },
-            {
-                "$group": {
-                    "_id": "$research_direction",
-                    "count": {"$sum": 1}
-                }
-            },
+            {"$group": {"_id": "$research_direction", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}},
             {"$limit": 50},
             {"$project": {"_id": 1}}
@@ -343,7 +261,6 @@ async def get_filter_options(
         research_directions_cursor = db.tutors.aggregate(research_directions_pipeline)
         research_directions = [doc["_id"] for doc in await research_directions_cursor.to_list(length=50)]
         
-        # 获取标签列表（取前30个最常见的）
         tags_pipeline = [
             {
                 "$match": {
@@ -355,12 +272,7 @@ async def get_filter_options(
                 }
             },
             {"$unwind": "$tags"},
-            {
-                "$group": {
-                    "_id": "$tags",
-                    "count": {"$sum": 1}
-                }
-            },
+            {"$group": {"_id": "$tags", "count": {"$sum": 1}}},
             {"$sort": {"count": -1}},
             {"$limit": 30},
             {"$project": {"_id": 1}}

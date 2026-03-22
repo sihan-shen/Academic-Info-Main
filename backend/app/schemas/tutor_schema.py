@@ -80,6 +80,11 @@ class TutorCreateRequest(BaseModel):
     avatar_url: Optional[str] = Field(None, max_length=500, description="头像URL")
     personal_page_url: Optional[str] = Field(None, max_length=500, description="个人主页URL")
     bio: Optional[str] = Field(None, max_length=2000, description="个人简介")
+    province: Optional[str] = Field(None, max_length=50, description="所在省份")
+    city: Optional[str] = Field(None, max_length=50, description="所在城市")
+    subject: Optional[str] = Field(None, max_length=100, description="学科领域/一级学科")
+    admission_types: List[str] = Field(default_factory=list, max_items=10, description="招生类型（硕士、博士、博士后）")
+    academic_tags: List[str] = Field(default_factory=list, max_items=20, description="学术偏好标签")
     papers: List[PaperInput] = Field(default_factory=list, description="论文列表")
     projects: List[ProjectInput] = Field(default_factory=list, description="项目列表")
     tags: List[str] = Field(default_factory=list, max_items=20, description="标签列表")
@@ -98,7 +103,6 @@ class TutorCreateRequest(BaseModel):
         """验证电话号码格式"""
         if v is not None:
             v = v.strip()
-            # 简单验证：只包含数字、空格、短横线、括号
             import re
             if not re.match(r'^[\d\s\-\(\)\+]+$', v):
                 raise ValueError('电话号码格式不正确')
@@ -117,9 +121,7 @@ class TutorCreateRequest(BaseModel):
     def validate_tags(cls, v):
         """验证标签"""
         if v:
-            # 去重
             v = list(set(v))
-            # 去除空标签
             v = [tag.strip() for tag in v if tag.strip()]
         return v
     
@@ -170,6 +172,11 @@ class TutorUpdateRequest(BaseModel):
     avatar_url: Optional[str] = Field(None, max_length=500, description="头像URL")
     personal_page_url: Optional[str] = Field(None, max_length=500, description="个人主页URL")
     bio: Optional[str] = Field(None, max_length=2000, description="个人简介")
+    province: Optional[str] = Field(None, max_length=50, description="所在省份")
+    city: Optional[str] = Field(None, max_length=50, description="所在城市")
+    subject: Optional[str] = Field(None, max_length=100, description="学科领域/一级学科")
+    admission_types: Optional[List[str]] = Field(None, max_items=10, description="招生类型（硕士、博士、博士后）")
+    academic_tags: Optional[List[str]] = Field(None, max_items=20, description="学术偏好标签")
     papers: Optional[List[PaperInput]] = Field(None, description="论文列表（完全替换）")
     projects: Optional[List[ProjectInput]] = Field(None, description="项目列表（完全替换）")
     tags: Optional[List[str]] = Field(None, max_items=20, description="标签列表（完全替换）")
@@ -206,9 +213,7 @@ class TutorUpdateRequest(BaseModel):
     def validate_tags(cls, v):
         """验证标签"""
         if v is not None:
-            # 去重
             v = list(set(v))
-            # 去除空标签
             v = [tag.strip() for tag in v if tag.strip()]
         return v
     
@@ -236,6 +241,11 @@ class TutorResponse(BaseModel):
     avatar_url: Optional[str] = Field(None, description="头像URL")
     personal_page_url: Optional[str] = Field(None, description="个人主页URL")
     bio: Optional[str] = Field(None, description="个人简介")
+    province: Optional[str] = Field(None, description="所在省份")
+    city: Optional[str] = Field(None, description="所在城市")
+    subject: Optional[str] = Field(None, description="学科领域/一级学科")
+    admission_types: List[str] = Field(default_factory=list, description="招生类型")
+    academic_tags: List[str] = Field(default_factory=list, description="学术偏好标签")
     papers: List[Dict[str, Any]] = Field(default_factory=list, description="论文列表")
     projects: List[Dict[str, Any]] = Field(default_factory=list, description="项目列表")
     tags: List[str] = Field(default_factory=list, description="标签列表")
@@ -273,7 +283,6 @@ class TutorBatchDeleteRequest(BaseModel):
             raise ValueError('导师ID列表不能为空')
         if len(v) > 100:
             raise ValueError('导师ID列表最多100个')
-        # 去重
         return list(set(v))
     
     class Config:

@@ -51,7 +51,6 @@ async def get_current_admin(current_user: User = Depends(get_current_user)) -> U
         return current_user
     
     # 方法3: 通过邮箱白名单验证（备用方案）
-    # 注意：User模型中可能没有email字段，需要从数据库查询
     if user_data and user_data.get("email") in ADMIN_EMAILS:
         api_logger.info(f"管理员访问（邮箱验证）: {current_user.id} - {user_data.get('email')}")
         return current_user

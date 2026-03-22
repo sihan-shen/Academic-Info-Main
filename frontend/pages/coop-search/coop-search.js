@@ -95,7 +95,7 @@ const SUBJECT_DIRECTIONS_MAP = {
 Page({
   data: {
     keyword: '',
-    totalCount: 328, 
+    totalCount: 0, 
     searchMode: 'filter',
     uploadedFile: null,
     
@@ -483,10 +483,26 @@ Page({
   },
 
   updateTotalCount() {
-    const base = 50;
-    const random = Math.floor(Math.random() * 300);
-    this.setData({
-      totalCount: base + random
+    // 从后端获取真实的合作项目数量
+    const apiConfig = require('../../config/api.js');
+    wx.request({
+      url: `${apiConfig.BASE_URL}/api/v1/tutor/stats`,
+      method: 'GET',
+      header: {
+        'Content-Type': 'application/json'
+      },
+      success: (res) => {
+        if (res.data && res.data.success) {
+          const stats = res.data.data;
+          this.setData({
+            totalCount: stats.total_coops || 0
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('[CoopSearch] 获取统计数据失败:', err);
+        this.setData({ totalCount: 0 });
+      }
     });
   },
 

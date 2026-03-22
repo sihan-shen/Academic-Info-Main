@@ -18,9 +18,9 @@ from app.utils import (
     success_response,
     error_response,
     business_error_response,
-    api_logger,
-    get_admin_user
+    api_logger
 )
+from app.utils.admin import get_current_admin as get_admin_user
 from app.db.mongo import get_db
 
 router = APIRouter(

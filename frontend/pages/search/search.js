@@ -1,5 +1,7 @@
 // pages/search/search.js
 
+const apiConfig = require('../../config/api.js');
+
 // 院校数据映射表
 const CITY_SCHOOLS_MAP = {
   'beijing': [
@@ -97,6 +99,7 @@ Page({
   data: {
     keyword: '',
     totalCount: 0,
+    coopCount: 0,
     showResults: false,
     searchMode: 'filter',
     
@@ -204,79 +207,121 @@ Page({
     ],
 
     currentPage: 1,
-    tutorList: [
-      {
-        id: 1,
-        name: '张明远',
-        avatar: '/images/tutor-zhang.png',
-        school: '清华大学',
-        department: '计算机科学与技术系',
-        direction: '人工智能',
-        desc: '发表顶级论文150+篇，主持国家重点研发计划3项',
-        tags: ['985博导', '中国科学院院士', '高产出'],
-        titleTag: '教授'
+    pageSize: 10,
+    tutorList: [],
+    isLoading: false,
+    hasMore: true,
+    totalCount: 0
+  },
+
+  // 从后端获取导师列表
+  fetchTutorList(isRefresh = true) {
+    if (this.data.isLoading) return;
+    
+    this.setData({ isLoading: true });
+    
+    const { currentPage, pageSize, keyword } = this.data;
+    const page = isRefresh ? 1 : currentPage;
+    
+    // 构建筛选参数
+    const params = {
+      page: page,
+      page_size: pageSize
+    };
+    
+    if (keyword) {
+      params.keyword = keyword;
+    }
+    
+    // 添加城市筛选
+    const { cityConfig } = this.data;
+    if (cityConfig.selected) {
+      params.city = cityConfig.selected.label;
+    }
+    
+    // 添加学校筛选
+    const { schoolConfig } = this.data;
+    if (schoolConfig.selected && schoolConfig.selected.length > 0) {
+      params.school = schoolConfig.selected.map(s => s.label).join(',');
+    }
+    
+    if (apiConfig.DEBUG) {
+      console.log('[Search] 获取导师列表, 参数:', params);
+    }
+    
+    // 构建查询字符串
+    const queryString = Object.keys(params)
+      .filter(key => params[key] !== null && params[key] !== undefined && params[key] !== '')
+      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+      .join('&');
+    
+    wx.request({
+      url: `${apiConfig.BASE_URL}/api/v1/tutor/list?${queryString}`,
+      method: 'GET',
+      timeout: 10000,
+      success: (res) => {
+        if (res.statusCode === 200 && res.data && res.data.success) {
+          const result = res.data.data;
+          const newTutors = (result.list || []).map(tutor => ({
+            id: tutor.id,
+            name: tutor.name,
+            avatar: tutor.avatar || '/images/default-avatar.png',
+            school: tutor.school || '',
+            department: tutor.department || '',
+            direction: tutor.research_direction || '',
+            desc: tutor.bio || `${tutor.school} ${tutor.department}`,
+            tags: tutor.tags || [],
+            titleTag: tutor.title || ''
+          }));
+          
+          this.setData({
+            tutorList: isRefresh ? newTutors : [...this.data.tutorList, ...newTutors],
+            totalCount: result.total || 0,
+            currentPage: page + 1,
+            hasMore: newTutors.length === pageSize
+          });
+          
+          if (apiConfig.DEBUG) {
+            console.log('[Search] 获取成功, 共', result.total, '条');
+          }
+        } else {
+          console.warn('[Search] 获取失败:', res.data);
+          if (isRefresh) {
+            this.setData({ tutorList: [], totalCount: 0 });
+          }
+        }
       },
-      {
-        id: 2,
-        name: '李晓华',
-        avatar: '/images/tutor-li.png',
-        school: '北京大学',
-        department: '信息科学技术学院',
-        direction: '机器学习',
-        desc: '获国家杰青，培养博士30余名，就业率98%',
-        tags: ['985博导', '杰青'],
-        titleTag: '信息科学技术学院院长'
+      fail: (err) => {
+        console.error('[Search] 请求失败:', err);
+        wx.showToast({
+          title: '无法连接服务器，请检查后端是否启动',
+          icon: 'none',
+          duration: 3000
+        });
+        if (isRefresh) {
+          this.setData({ tutorList: [], totalCount: 0 });
+        }
       },
-      {
-        id: 3,
-        name: '王建国',
-        avatar: '/images/tutor-wang.png',
-        school: '浙江大学',
-        department: '控制科学与工程学院',
-        direction: '智能控制',
-        desc: '国际合作项目5项，专利授权40+项',
-        tags: ['211', '跨校合作'],
-        titleTag: '副教授'
-      },
-      {
-        id: 4,
-        name: '陈雨婷',
-        avatar: '/images/default-avatar.png',
-        school: '复旦大学',
-        department: '经济学院',
-        direction: '宏观经济',
-        desc: '专注于数字经济与宏观政策研究，发表多篇SSCI',
-        tags: ['青年学者', '海归'],
-        titleTag: '讲师'
-      },
-      {
-        id: 5,
-        name: '赵强',
-        avatar: '/images/default-avatar.png',
-        school: '上海交通大学',
-        department: '人工智能研究院',
-        direction: '计算机视觉',
-        desc: 'CVPR/ICCV 审稿人，阿里达摩院合作学者',
-        tags: ['985', '企业合作'],
-        titleTag: '研究员'
-      },
-      {
-        id: 6,
-        name: '刘洋',
-        avatar: '/images/default-avatar.png',
-        school: '南京大学',
-        department: '物理学院',
-        direction: '凝聚态物理',
-        desc: '国家自然科学基金优秀青年基金获得者',
-        tags: ['优青', '高产出'],
-        titleTag: '教授'
+      complete: () => {
+        this.setData({ isLoading: false });
+        wx.hideLoading();
       }
-    ]
+    });
+  },
+
+  // 加载更多
+  loadMore() {
+    if (this.data.hasMore && !this.data.isLoading) {
+      this.fetchTutorList(false);
+    }
   },
 
   onLoad(options) {
     this.initCitySchoolData();
     this.initSubjectDirectionData();
+    
+    // 获取导师统计数据
+    this.fetchTutorStats();
 
     if (options.keyword) {
       this.setData({ 
@@ -284,7 +329,7 @@ Page({
         searchMode: 'result',
         showResults: true
       });
-      this.doSearch();
+      this.fetchTutorList(true);
     }
   },
 
@@ -312,9 +357,11 @@ Page({
     this.setData({ 
       keyword,
       searchMode: 'result',
-      showResults: true
+      showResults: true,
+      currentPage: 1,
+      hasMore: true
     });
-    this.doSearch();
+    this.fetchTutorList(true);
   },
 
   // ---------------- UI Helpers ----------------
@@ -369,11 +416,7 @@ Page({
       ...schoolConfig,
       options: schoolList,
       filteredOptions: schoolList,
-      // selected: schoolConfig.selected, // Preserve selection? Or Clear?
-      // Usually changing city implies changing schools. But user asked to keep for school/city interaction in previous turn? 
-      // Actually user asked "User changes province, selected schools should NOT change".
-      // So we keep `selected`.
-      selected: schoolConfig.selected,
+      selected: [],
       searchText: ''
     };
 
@@ -381,6 +424,12 @@ Page({
       cityConfig: newCityConfig,
       schoolConfig: newSchoolConfig
     });
+    
+    // 如果已经在结果页，重新搜索
+    if (this.data.showResults) {
+      this.setData({ currentPage: 1, hasMore: true });
+      this.fetchTutorList(true);
+    }
   },
 
   // ---------------- School Filter ----------------
@@ -640,38 +689,49 @@ Page({
 
   confirmFilter() {
     this.setData({ showResults: true, searchMode: 'result' });
-    this.doSearch();
+    // 重置分页并搜索
+    this.setData({
+      currentPage: 1,
+      hasMore: true
+    });
+    this.fetchTutorList(true);
   },
 
   doSearch() {
-    const { keyword, filterGroups, cityConfig, schoolConfig, subjectConfig, directionConfig } = this.data;
-    const params = {
-      keyword,
-      filters: {}
-    };
+    // 重置分页并重新获取数据
+    this.setData({
+      currentPage: 1,
+      hasMore: true
+    });
+    this.fetchTutorList(true);
+  },
 
-    filterGroups.forEach(group => {
-      const selected = group.options.find(o => o.selected && o.value !== '');
-      if (selected) {
-        params.filters[group.key] = selected.value;
+  // 获取导师统计数据
+  fetchTutorStats() {
+    wx.request({
+      url: `${apiConfig.BASE_URL}/api/v1/tutor/stats`,
+      method: 'GET',
+      header: {
+        'Content-Type': 'application/json'
+      },
+      success: (res) => {
+        if (res.data && res.data.success) {
+          const stats = res.data.data;
+          this.setData({
+            totalCount: stats.total_tutors || 0,
+            coopCount: stats.total_coops || 0
+          });
+          if (apiConfig.DEBUG) {
+            console.log('[Search] 获取统计数据成功:', stats);
+          }
+        } else {
+          console.warn('[Search] 获取统计数据失败:', res.data);
+        }
+      },
+      fail: (err) => {
+        console.error('[Search] 获取统计数据失败:', err);
       }
     });
-
-    if (cityConfig.selected) params.filters.city = cityConfig.selected.value;
-    if (schoolConfig.selected.length > 0) params.filters.school = schoolConfig.selected.map(s => s.value);
-    
-    if (subjectConfig.selected) params.filters.subject = subjectConfig.selected.value;
-    if (directionConfig.selected.length > 0) params.filters.direction = directionConfig.selected.map(s => s.value);
-
-    console.log('Searching with params:', params);
-    
-    wx.showLoading({ title: '加载中...', mask: true });
-    setTimeout(() => {
-      wx.hideLoading();
-      this.setData({
-        totalCount: Math.floor(Math.random() * 450) + 50
-      });
-    }, 300);
   },
 
   navigateToDetail(e) {

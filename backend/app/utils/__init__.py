@@ -39,13 +39,8 @@ from .security import (
     mask_sensitive_data
 )
 
-from .admin import (
-    get_current_admin,
-    check_admin_permission,
-    add_admin_user,
-    remove_admin_user,
-    get_admin_list
-)
+# 不在顶层导出 admin，避免循环导入：login → utils → admin → login
+# 需要管理员相关时请使用: from app.utils.admin import get_current_admin 等
 
 __all__ = [
     # response
@@ -80,11 +75,4 @@ __all__ = [
     'validate_email',
     'validate_phone',
     'mask_sensitive_data',
-    
-    # admin
-    'get_current_admin',
-    'check_admin_permission',
-    'add_admin_user',
-    'remove_admin_user',
-    'get_admin_list'
 ]

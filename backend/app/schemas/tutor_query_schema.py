@@ -10,24 +10,24 @@ from enum import Enum
 
 class SortField(str, Enum):
     """排序字段枚举"""
-    CREATED_AT = "created_at"  # 创建时间
-    UPDATED_AT = "updated_at"  # 更新时间
-    NAME = "name"  # 姓名
-    PAPER_COUNT = "paper_count"  # 论文数量
-    PROJECT_COUNT = "project_count"  # 项目数量
+    CREATED_AT = "created_at"
+    UPDATED_AT = "updated_at"
+    NAME = "name"
+    PAPER_COUNT = "paper_count"
+    PROJECT_COUNT = "project_count"
 
 
 class SortOrder(str, Enum):
     """排序方向枚举"""
-    ASC = "asc"  # 升序
-    DESC = "desc"  # 降序
+    ASC = "asc"
+    DESC = "desc"
 
 
 class RecruitmentType(str, Enum):
     """招生类型枚举"""
-    ACADEMIC = "academic"  # 学硕
-    PROFESSIONAL = "professional"  # 专硕
-    BOTH = "both"  # 两者都招
+    ACADEMIC = "academic"
+    PROFESSIONAL = "professional"
+    BOTH = "both"
 
 
 class TutorQueryParams(BaseModel):
@@ -64,11 +64,11 @@ class TutorQueryParams(BaseModel):
 
 class TutorListResponse(BaseModel):
     """导师列表响应模型"""
-    list: List[dict]  # 导师列表
-    total: int  # 总数
-    page: int  # 当前页码
-    page_size: int  # 每页数量
-    total_pages: int  # 总页数
+    list: List[dict]
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
     
     class Config:
         from_attributes = True

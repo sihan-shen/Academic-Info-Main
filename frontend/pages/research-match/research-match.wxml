@@ -47,14 +47,18 @@
       <!-- 顶部：匹配度 -->
       <view class="card-top">
         <view class="match-tag {{item.level === '高度适配' ? 'tag-high' : 'tag-normal'}}">{{item.level}}</view>
-        <text class="match-rate">研究方向匹配度</text>
+        <view class="match-score-wrapper">
+          <text class="match-score">{{item.matchScore}}%</text>
+          <text class="match-label">研究方向匹配度</text>
+        </view>
       </view>
 
       <!-- 导师信息 -->
-      <view class="tutor-info">
+      <view class="tutor-info" bindtap="viewTutorDetail" data-id="{{item.id}}">
         <image class="tutor-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
         <view class="tutor-detail">
           <view class="tutor-name">{{item.name}}</view>
+          <view class="tutor-title">{{item.title}}</view>
           <view class="tutor-univ">{{item.university}} · {{item.department}}</view>
         </view>
       </view>
@@ -67,7 +71,7 @@
       <!-- 高影响力论文 -->
       <view class="paper-row">
         <text class="paper-label">高影响力论文 {{item.papers}}篇</text>
-        <text class="paper-link">查看</text>
+        <text class="paper-link" bindtap="viewTutorDetail" data-id="{{item.id}}">查看 ></text>
       </view>
 
       <!-- 匹配原因 -->
@@ -79,8 +83,15 @@
       <!-- 操作按钮 -->
       <view class="action-row">
         <view class="btn-collect" bindtap="onCollect" data-id="{{item.id}}">☆ 收藏导师</view>
-        <view class="btn-contact" bindtap="onContact" data-id="{{item.id}}">✉ 发起沟通</view>
+        <view class="btn-contact" bindtap="viewTutorDetail" data-id="{{item.id}}">查看详情 ></view>
       </view>
     </view>
+  </view>
+
+  <!-- 无结果 -->
+  <view class="empty-state" wx:if="{{matched && tutors.length === 0}}">
+    <text class="empty-icon">🔍</text>
+    <text class="empty-text">未找到匹配的导师</text>
+    <text class="empty-subtitle">请尝试调整关键词或学科方向</text>
   </view>
 </view>

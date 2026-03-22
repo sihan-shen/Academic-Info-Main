@@ -1,28 +1,41 @@
 <view class="container">
+    <!-- 加载状态 -->
+    <view class="loading-container" wx:if="{{isLoading}}">
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-container" wx:elif="{{!tutor}}">
+      <text class="empty-text">导师信息加载失败</text>
+      <text class="empty-subtext">请返回重试</text>
+    </view>
+
+    <!-- 正常内容 -->
+    <block wx:else>
     <!-- Tutor Header -->
     <view class="tutor-header">
       <view class="header-top">
-        <image class="avatar" src="{{tutor.avatar}}"></image>
+        <image class="avatar" src="{{tutor.avatar || '/images/default-avatar.png'}}" mode="aspectFill"></image>
         <view class="header-info">
-          <view class="name">{{tutor.name}}</view>
-          <view class="school">{{tutor.school}} · {{tutor.department}}</view>
-          <view class="tags">
+          <view class="name">{{tutor.name || '未知导师'}}</view>
+          <view class="school">{{tutor.school || ''}} {{tutor.department ? '· ' + tutor.department : ''}}</view>
+          <view class="tags" wx:if="{{tutor.tags && tutor.tags.length > 0}}">
             <text class="tag" wx:for="{{tutor.tags}}" wx:key="*this">{{item}}</text>
           </view>
         </view>
       </view>
-      <view class="header-stats">
+      <view class="header-stats" wx:if="{{tutor.papers && tutor.papers.length > 0}}">
         <view class="stat-item">
-          <text class="stat-num">150+</text>
+          <text class="stat-num">{{tutor.papers.length}}+</text>
           <text class="stat-label">发表论文</text>
         </view>
         <view class="stat-item">
-          <text class="stat-num">36</text>
-          <text class="stat-label">高影响</text>
+          <text class="stat-num">{{tutor.projects ? tutor.projects.length : 0}}</text>
+          <text class="stat-label">科研项目</text>
         </view>
         <view class="stat-item">
-          <text class="stat-num">98%</text>
-          <text class="stat-label">就业率</text>
+          <text class="stat-num">{{tutor.students ? tutor.students.length : 0}}</text>
+          <text class="stat-label">指导学生</text>
         </view>
       </view>
     </view>
@@ -64,47 +77,172 @@
 
       <!-- Tab 1: 社会关系 -->
       <view class="content-section section-even" id="section-1">
-        <!-- New Graph Section -->
+        <!-- 学术合作关系图谱 - 新版设计 -->
         <view class="section-container">
             <view class="section-header">
                 <view class="section-title">学术合作关系图谱</view>
+                <view class="section-subtitle" wx:if="{{collaboratorsList.length > 0}}">共 {{collaboratorsList.length}} 位合作伙伴</view>
             </view>
-            <view class="graph-box">
-                <view class="graph-content">
-                    <!-- Lines -->
-                    <view class="graph-line line-tl"></view>
-                    <view class="graph-line line-tr"></view>
-                    <view class="graph-line line-bl"></view>
-                    <view class="graph-line line-br"></view>
-                    
-                    <!-- Nodes -->
-                    <view class="graph-node node-center">
-                        <view class="node-circle circle-you"></view>
-                        <text class="node-label">您</text>
-                    </view>
-                    <view class="graph-node node-tl">
-                        <view class="node-circle circle-blue"></view>
-                        <text class="node-label">导师A</text>
-                    </view>
-                    <view class="graph-node node-tr">
-                        <view class="node-circle circle-orange"></view>
-                        <text class="node-label">导师B</text>
-                    </view>
-                    <view class="graph-node node-bl">
-                        <view class="node-circle circle-green"></view>
-                        <text class="node-label">团队C</text>
-                    </view>
-                    <view class="graph-node node-br">
-                        <view class="node-circle circle-red"></view>
-                        <text class="node-label">机构D</text>
-                    </view>
-
-                    <!-- Search Icon (Decorative) -->
-                    <view class="graph-icon-search">
-                        <view class="search-glass"></view>
+            
+            <!-- 学术合作图谱 -->
+            <view class="scholar-network-container" wx:if="{{collaboratorsList.length > 0}}" bindtap="onNetworkBackgroundTap">
+                <!-- 点击提示 -->
+                <view class="network-hint" wx:if="{{!isNetworkExpanded}}">
+                    <text class="hint-text">点击空白处查看详情</text>
+                </view>
+                
+                <!-- 背景纹理 -->
+                <view class="network-bg-pattern"></view>
+                
+                <!-- 连接线层 - 使用CSS实现 -->
+                <view class="connections-layer">
+                    <view wx:for="{{networkCurves}}" wx:key="index"
+                          class="curve-line"
+                          style="left: {{item.x1}}%; top: {{item.y1}}%; width: {{item.length}}%; transform: rotate({{item.angle}}deg);">
                     </view>
                 </view>
-                <view class="graph-caption">点击节点查看详情，支持缩放查看</view>
+                
+                <!-- 节点层 -->
+                <view class="network-nodes">
+                    <!-- 中心导师节点 -->
+                    <view class="center-scholar-wrapper">
+                        <view class="center-scholar-node {{centerAnim}}" 
+                              data-id="{{centerNode.id}}" 
+                              data-type="center" 
+                              bindtap="onGraphNodeTap">
+                            <view class="scholar-avatar-wrapper center-wrapper">
+                                <image class="scholar-avatar center-avatar" 
+                                       src="{{centerNode.avatar || '/images/default-avatar.png'}}" 
+                                       mode="aspectFill"/>
+                                <view class="status-indicator online"></view>
+                            </view>
+                            <view class="scholar-info">
+                                <text class="scholar-name center-name">{{centerNode.name}}</text>
+                                <text class="scholar-role">当前导师</text>
+                            </view>
+                            <view class="node-glow center-glow"></view>
+                        </view>
+                    </view>
+                    
+                    <!-- 合作者节点 -->
+                    <view wx:for="{{collaboratorNodes}}" wx:key="id"
+                          class="peer-scholar-wrapper"
+                          style="left: {{item.pos.x}}%; top: {{item.pos.y}}%;">
+                        <view class="peer-scholar-node {{item.animClass}} {{item.colorClass}}"
+                              data-id="{{item.id}}" 
+                              data-type="collaborator"
+                              data-index="{{index}}"
+                              bindtap="onGraphNodeTap"
+                              bindlongpress="onNodeLongPress">
+                            <view class="scholar-avatar-wrapper">
+                                <image class="scholar-avatar" 
+                                       src="{{item.avatar || '/images/default-avatar.png'}}" 
+                                       mode="aspectFill"/>
+                            </view>
+                            <view class="scholar-info">
+                                <text class="scholar-name">{{item.name}}</text>
+                                <text class="coop-count" wx:if="{{item.coopCount}}">{{item.coopCount}}项</text>
+                            </view>
+                            <view class="node-glow"></view>
+                        </view>
+                    </view>
+                </view>
+                
+                <!-- 悬停提示 -->
+                <view class="network-tooltip" wx:if="{{showTooltip}}" style="left: {{tooltipX}}px; top: {{tooltipY}}px;">
+                    <view class="tooltip-content">
+                        <text class="tooltip-name">{{tooltipData.name}}</text>
+                        <text class="tooltip-detail" wx:if="{{tooltipData.papers}}">论文: {{tooltipData.papers}}篇</text>
+                        <text class="tooltip-detail" wx:if="{{tooltipData.projects}}">项目: {{tooltipData.projects}}个</text>
+                    </view>
+                </view>
+            </view>
+            <!-- 全屏展开的网络图谱详情 -->
+            <view class="network-expanded-overlay" wx:if="{{isNetworkExpanded}}" bindtap="onCloseExpandedNetwork">
+                <view class="expanded-container" catchtap="onExpandedContainerTap">
+                    <!-- 关闭按钮 -->
+                    <view class="close-btn" catchtap="onCloseExpandedNetwork">
+                        <text class="close-icon">×</text>
+                    </view>
+                    
+                    <!-- 标题 -->
+                    <view class="expanded-header">
+                        <text class="expanded-title">学术合作关系详情</text>
+                        <text class="expanded-subtitle">共 {{collaboratorsList.length}} 位合作伙伴</text>
+                    </view>
+                    
+                    <!-- 放大的图谱 -->
+                    <view class="expanded-graph">
+                        <view class="expanded-connections">
+                            <view wx:for="{{expandedNetworkCurves}}" wx:key="index"
+                                  class="expanded-line"
+                                  style="left: {{item.x1}}%; top: {{item.y1}}%; width: {{item.length}}%; transform: rotate({{item.angle}}deg);">
+                            </view>
+                        </view>
+                        
+                        <view class="expanded-nodes">
+                            <!-- 中心节点 -->
+                            <view class="expanded-center-wrapper">
+                                <view class="expanded-center-node">
+                                    <image class="expanded-center-avatar" src="{{centerNode.avatar || '/images/default-avatar.png'}}" mode="aspectFill"/>
+                                    <text class="expanded-center-name">{{centerNode.name}}</text>
+                                    <text class="expanded-center-role">当前导师</text>
+                                </view>
+                            </view>
+                            
+                            <!-- 合作者节点 -->
+                            <view wx:for="{{expandedCollaboratorNodes}}" wx:key="id"
+                                  class="expanded-peer-wrapper"
+                                  style="left: {{item.pos.x}}%; top: {{item.pos.y}}%;">
+                                <view class="expanded-peer-node {{item.colorClass}}" data-id="{{item.id}}" bindtap="onExpandedNodeTap">
+                                    <image class="expanded-peer-avatar" src="{{item.avatar || '/images/default-avatar.png'}}" mode="aspectFill"/>
+                                    <text class="expanded-peer-name">{{item.name}}</text>
+                                    <view class="expanded-peer-stats">
+                                        <text class="peer-stat">{{item.coopCount || 0}}项合作</text>
+                                        <text class="peer-stat" wx:if="{{item.papers}}">{{item.papers}}篇论文</text>
+                                    </view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                    
+                    <!-- 合作详情列表 -->
+                    <scroll-view class="expanded-collab-list" scroll-y="true">
+                        <view class="expanded-list-header">合作详情</view>
+                        <view wx:for="{{collaboratorsList}}" wx:key="id" class="expanded-collab-item" data-id="{{item.id}}" bindtap="onExpandedNodeTap">
+                            <view class="collab-dot {{item.colorClass || 'peer-indigo'}}"></view>
+                            <view class="expanded-collab-info">
+                                <text class="expanded-collab-name">{{item.name}}</text>
+                                <text class="expanded-collab-school">{{item.school}}</text>
+                                <text class="expanded-collab-detail" wx:if="{{item.relation}}">{{item.relation}}</text>
+                            </view>
+                            <view class="expanded-collab-stats">
+                                <text class="stat-badge">{{item.coopCount || 0}} 项合作</text>
+                            </view>
+                        </view>
+                    </scroll-view>
+                </view>
+            </view>
+            <view class="network-loading" wx:elif="{{networkLoading}}">
+                <text class="loading-text">加载合作数据中...</text>
+            </view>
+            <view class="network-empty" wx:elif="{{!networkLoading && collaboratorsList.length === 0}}">
+                <text class="empty-text">暂无合作数据</text>
+            </view>
+            <view class="collaborators-list" wx:if="{{collaboratorsList.length > 0}}">
+                <view class="list-header">合作详情</view>
+                <view wx:for="{{collaboratorsList}}" wx:key="id" class="collab-item" data-id="{{item.id}}" bindtap="onGraphNodeTap">
+                    <image class="collab-avatar" src="{{item.avatar || '/images/default-avatar.png'}}"></image>
+                    <view class="collab-info">
+                        <view class="collab-name-row">
+                            <text class="collab-name">{{item.name}}</text>
+                            <text class="collab-relation-tag">{{item.relation}}</text>
+                        </view>
+                        <text class="collab-school">{{item.school}}</text>
+                        <text class="collab-project" wx:if="{{item.projects && item.projects.length > 0}}">{{item.projects[0]}}</text>
+                    </view>
+                    <text class="collab-arrow">›</text>
+                </view>
             </view>
         </view>
 
@@ -151,63 +289,51 @@
         </view>
       </view>
 
-      <!-- Tab 3: 学术合作 -->
+      <!-- Tab 3: 学术成果 -->
       <view class="content-section section-even" id="section-3">
-        <!-- 1. 学术合作成果总结 -->
         <view class="section-container">
             <view class="section-header">
-                <view class="section-title">学术合作成果</view>
+            <view class="section-title">主要成就</view>
             </view>
             <view class="section-text">{{tutor.achievements}}</view>
         </view>
 
-        <!-- 2. 重点项目与论文 (合并列表) -->
         <view class="section-container">
             <view class="section-header">
-                <view class="section-title">重点项目与论文</view>
+            <view class="section-title">代表性论文</view>
+            </view>
+            <view class="paper-list">
+            <view class="paper-item" wx:for="{{tutor.papers}}" wx:key="id">
+                <view class="paper-title">{{item.title}}</view>
+                <view class="paper-info">
+                <text class="paper-journal">{{item.journal}}</text>
+                <text class="paper-year">{{item.year}}</text>
+                </view>
+            </view>
+            </view>
+        </view>
+      </view>
+
+      <!-- Tab 4: 合作资源 -->
+      <view class="content-section section-odd" id="section-4">
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">合作机构</view>
             </view>
             <view class="project-list">
-                <!-- Projects -->
-                <view class="project-item" wx:for="{{tutor.projects}}" wx:key="id" bindtap="onItemClick" data-id="{{item.id}}" data-type="project">
+                <view class="project-item" wx:for="{{tutor.coops}}" wx:key="id">
                     <view class="project-header">
-                        <view class="project-title">
-                            <text class="tag-label tag-project">项目</text>
-                            {{item.title}}
-                        </view>
-                        <view class="project-role">{{item.role}}</view>
-                    </view>
-                    <view class="project-desc">{{item.desc}}</view>
-                </view>
-                
-                <!-- Coops (作为项目展示) -->
-                <view class="project-item" wx:for="{{tutor.coops}}" wx:key="id" bindtap="onItemClick" data-id="{{item.id}}" data-type="coop">
-                    <view class="project-header">
-                        <view class="project-title">
-                            <text class="tag-label tag-project">项目</text>
-                            {{item.name}}
-                        </view>
+                        <view class="project-title">{{item.name}}</view>
                         <view class="project-role">{{item.type}}</view>
                     </view>
                     <view class="project-desc">{{item.desc}}</view>
-                </view>
-
-                <!-- Papers -->
-                <view class="project-item" wx:for="{{tutor.papers}}" wx:key="id" bindtap="onItemClick" data-id="{{item.id}}" data-type="paper">
-                    <view class="project-header">
-                        <view class="project-title">
-                            <text class="tag-label tag-paper">论文</text>
-                            {{item.title}}
-                        </view>
-                        <view class="project-role">{{item.year}}</view>
-                    </view>
-                    <view class="project-desc">{{item.journal}}</view>
                 </view>
             </view>
         </view>
       </view>
 
-      <!-- Tab 4: 学生培养 -->
-      <view class="content-section section-odd" id="section-4">
+      <!-- Tab 5: 学生培养 -->
+      <view class="content-section section-even" id="section-5">
         <view class="section-container">
             <view class="section-header">
             <view class="section-title">指导情况</view>
@@ -229,17 +355,51 @@
         </view>
       </view>
 
+      <!-- Tab 6: 项目 -->
+      <view class="content-section section-odd" id="section-6">
+        <view class="section-container">
+            <view class="section-header">
+            <view class="section-title">科研项目</view>
+            </view>
+            <view class="project-list">
+            <view class="project-item" wx:for="{{tutor.projects}}" wx:key="id">
+                <view class="project-header">
+                <view class="project-title">{{item.title}}</view>
+                <view class="project-role">{{item.role}}</view>
+                </view>
+                <view class="project-desc">{{item.desc}}</view>
+            </view>
+            </view>
+        </view>
+      </view>
+
+      <!-- Tab 7: 风险排查 -->
+      <view class="content-section section-even" id="section-7">
+        <view class="section-container">
+            <view class="section-header">
+                <view class="section-title">风险记录</view>
+            </view>
+            <view class="paper-list">
+                <view class="paper-item" wx:for="{{tutor.risks}}" wx:key="id">
+                    <view class="paper-title">{{item.type}}</view>
+                    <view class="project-desc">{{item.content}}</view>
+                </view>
+            </view>
+        </view>
+      </view>
+
     </view> <!-- End content-body -->
     
     <!-- Spacer for bottom bar -->
     <view class="bottom-spacer"></view>
 
   <!-- Bottom Bar -->
-  <view class="bottom-bar">
+  <view class="bottom-bar" wx:if="{{!isLoading && tutor}}">
     <view class="action-btn" bindtap="onCollect">
       <image src="{{isCollected ? '/images/fav-icon-new.png' : '/images/fav-icon.png'}}" class="{{isCollected ? 'collected' : ''}}"></image>
       <text>{{isCollected ? '已收藏' : '收藏'}}</text>
     </view>
     <view class="contact-btn" bindtap="onContact">立即咨询</view>
   </view>
+  </block> <!-- End normal content -->
 </view>

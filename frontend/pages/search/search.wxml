@@ -256,22 +256,34 @@
     
     <!-- 底部固定栏: Count + 确定按钮 -->
     <view class="bottom-bar">
-      <view class="count-info">共 {{totalCount}} 位导师符合条件</view>
+      <view class="count-info">共 {{totalCount}} 位导师 · {{coopCount}} 个合作项目</view>
       <view class="btn-confirm" bindtap="confirmFilter">确定</view>
     </view>
   </view>
 
   <!-- 结果列表 -->
   <view class="results-container" wx:if="{{searchMode === 'result'}}">
-    <scroll-view class="tutor-list" scroll-y="true">
+    <scroll-view class="tutor-list" scroll-y="true" bindscrolltolower="loadMore">
+      <!-- 加载状态 -->
+      <view class="loading-state" wx:if="{{isLoading && tutorList.length === 0}}">
+        <text class="loading-text">加载中...</text>
+      </view>
+      
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{!isLoading && tutorList.length === 0}}">
+        <text class="empty-text">暂无符合条件的导师</text>
+        <text class="empty-subtext">试试其他搜索条件</text>
+      </view>
+      
+      <!-- 导师列表 -->
       <view class="tutor-card" wx:for="{{tutorList}}" wx:key="id" bindtap="navigateToDetail" data-id="{{item.id}}">
         <view class="card-header">
-          <image class="avatar" src="{{item.avatar}}"></image>
+          <image class="avatar" src="{{item.avatar}}" mode="aspectFill"></image>
           <view class="header-info">
             <view class="name-row">
               <text class="name">{{item.name}}</text>
             </view>
-            <view class="school">{{item.school}} · {{item.department}}</view>
+            <view class="school">{{item.school}} {{item.department ? '· ' + item.department : ''}}</view>
             <view class="direction" wx:if="{{item.direction}}">核心方向：{{item.direction}}</view>
           </view>
         </view>
@@ -281,7 +293,15 @@
         </view>
         <view class="title-tag" wx:if="{{item.titleTag}}">{{item.titleTag}}</view>
       </view>
-      <view class="btn-re-filter" bindtap="openFilter">重新筛选</view>
+      
+      <!-- 加载更多 -->
+      <view class="load-more" wx:if="{{tutorList.length > 0}}">
+        <text wx:if="{{isLoading}}">加载中...</text>
+        <text wx:elif="{{hasMore}}">上拉加载更多</text>
+        <text wx:else>没有更多了</text>
+      </view>
+      
+      <view class="btn-re-filter" bindtap="openFilter" wx:if="{{tutorList.length > 0}}">重新筛选</view>
     </scroll-view>
   </view>
 </view>

@@ -129,7 +129,6 @@ class BatchFavoriteStatusRequest(BaseModel):
             raise ValueError('导师ID列表不能为空')
         if len(v) > 100:
             raise ValueError('导师ID列表最多100个')
-        # 去重
         return list(set(v))
     
     class Config:

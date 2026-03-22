@@ -324,6 +324,41 @@ checkbox {
   border-radius: 20rpx 0 0 20rpx;
 }
 
+/* Loading and Empty States */
+.loading-state,
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 40rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #666;
+  font-weight: 500;
+}
+
+.empty-subtext {
+  font-size: 26rpx;
+  color: #999;
+  margin-top: 16rpx;
+}
+
+/* Load More */
+.load-more {
+  text-align: center;
+  padding: 30rpx;
+  font-size: 26rpx;
+  color: #999;
+}
+
 /* Floating Re-filter Button */
 .btn-re-filter {
   position: fixed;

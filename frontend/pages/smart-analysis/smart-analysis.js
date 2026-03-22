@@ -1,73 +1,49 @@
+// pages/smart-analysis/smart-analysis.js - 智能分析主页
 Page({
   data: {
     hasAnalyzed: false,
-    isEditing: false, // 是否处于编辑模式
+    isEditing: false,
     analyzedTags: {
-      research: [],
-      background: []
+      research: ['人工智能', '深度学习', '计算机视觉'],
+      background: ['计算机科学', '清华大学']
     }
   },
 
-  onLoad(options) {
-    // 检查是否有之前分析过的记录（可选）
-    // const analyzed = wx.getStorageSync('hasAnalyzedCV');
-    // if (analyzed) {
-    //   this.setData({ hasAnalyzed: true });
-    // }
+  onLoad() {
+    // 页面加载时的逻辑
+    console.log('[SmartAnalysis] 页面加载');
   },
 
-  // 模拟上传和分析
+  // 处理简历上传
   handleUpload() {
-    console.log('handleUpload clicked');
-    const that = this;
+    console.log('[SmartAnalysis] 点击上传');
     
-    wx.showActionSheet({
-      itemList: ['从微信聊天选择文件', '手机文件上传'],
+    wx.chooseMessageFile({
+      count: 1,
+      type: 'file',
+      extension: ['pdf', 'doc', 'docx'],
       success: (res) => {
-        // 模拟选择文件
-        wx.showLoading({
-          title: '正在上传...',
+        const file = res.tempFiles[0];
+        console.log('[SmartAnalysis] 上传文件:', file);
+        
+        wx.showToast({
+          title: '上传成功',
+          icon: 'success',
+          duration: 2000
         });
-
-        setTimeout(() => {
-          wx.hideLoading();
-          wx.showLoading({
-            title: '智能分析中...',
-          });
-
-          // 模拟分析过程
-          setTimeout(() => {
-            wx.hideLoading();
-            
-            // 模拟分析出的标签结果
-            // 根据"查导师"（研究方向）和"查合作"（学术背景/合作需求）生成
-            that.setData({
-              hasAnalyzed: true,
-              analyzedTags: {
-                research: ['人工智能', '深度学习', '计算机视觉'], // 查导师相关
-                background: ['硕士', '985/211', '发表过SCI']     // 查合作相关
-              }
-            });
-
-            wx.showToast({
-              title: '分析完成',
-              icon: 'success'
-            });
-
-            // 保存状态
-            // wx.setStorageSync('hasAnalyzedCV', true);
-            
-          }, 1500); // 1.5秒分析时间
-
-        }, 1000); // 1秒上传时间
+        
+        // 模拟分析完成
+        this.setData({
+          hasAnalyzed: true
+        });
       },
-      fail: (res) => {
-        console.log('ActionSheet failed:', res.errMsg);
+      fail: (err) => {
+        console.log('[SmartAnalysis] 上传失败或取消:', err);
       }
     });
   },
 
-  // 切换编辑模式
+  // 切换编辑状态
   toggleEdit() {
     this.setData({
       isEditing: !this.data.isEditing
@@ -77,81 +53,75 @@ Page({
   // 删除标签
   deleteTag(e) {
     const { type, index } = e.currentTarget.dataset;
-    const { analyzedTags } = this.data;
+    const key = `analyzedTags.${type}`;
+    const tags = this.data.analyzedTags[type];
     
-    // 创建新数组以避免直接修改 data
-    const newList = [...analyzedTags[type]];
-    newList.splice(index, 1);
-    
+    tags.splice(index, 1);
     this.setData({
-      [`analyzedTags.${type}`]: newList
+      [key]: tags
     });
   },
 
   // 添加标签
   addTag(e) {
     const { type } = e.currentTarget.dataset;
-    const that = this;
-    
     wx.showModal({
       title: '添加标签',
+      content: '',
       editable: true,
       placeholderText: '请输入标签内容',
-      success(res) {
-        if (res.confirm && res.content.trim()) {
-          const newTag = res.content.trim();
-          const { analyzedTags } = that.data;
-          const newList = [...analyzedTags[type], newTag];
-          
-          that.setData({
-            [`analyzedTags.${type}`]: newList
+      success: (res) => {
+        if (res.confirm && res.content) {
+          const key = `analyzedTags.${type}`;
+          const tags = this.data.analyzedTags[type];
+          tags.push(res.content);
+          this.setData({
+            [key]: tags
           });
         }
       }
     });
   },
 
+  // 跳转到社工模型页面
   navigateToCoopMining() {
-    if (!this.data.hasAnalyzed) {
-      wx.showModal({
-        title: '提示',
-        content: '请先上传简历',
-        showCancel: false,
-        confirmText: '去上传',
-        success: (res) => {
-          if (res.confirm) {
-            // Option to trigger upload directly if user confirms
-            // this.handleUpload(); 
-            // Or just close the modal
-          }
-        }
-      });
-      return;
-    }
+    console.log('[SmartAnalysis] 点击社工模型');
     
+    // 直接进入，不做限制
     wx.navigateTo({
-      url: '/pages/coop-mining/coop-mining'
+      url: '/pages/coop-mining/coop-mining',
+      success: () => {
+        console.log('[SmartAnalysis] 跳转社工模型成功');
+      },
+      fail: (err) => {
+        console.error('[SmartAnalysis] 跳转社工模型失败:', err);
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none',
+          duration: 2000
+        });
+      }
     });
   },
 
+  // 跳转到智能导师匹配页面
   navigateToResearchMatch() {
-    if (!this.data.hasAnalyzed) {
-      wx.showModal({
-        title: '提示',
-        content: '请先上传简历',
-        showCancel: false,
-        confirmText: '去上传',
-        success: (res) => {
-          if (res.confirm) {
-            // this.handleUpload();
-          }
-        }
-      });
-      return;
-    }
-
+    console.log('[SmartAnalysis] 点击智能推导师');
+    
+    // 直接进入，不做限制
     wx.navigateTo({
-      url: '/pages/research-match/research-match'
+      url: '/pages/research-match/research-match',
+      success: () => {
+        console.log('[SmartAnalysis] 跳转智能推导师成功');
+      },
+      fail: (err) => {
+        console.error('[SmartAnalysis] 跳转智能推导师失败:', err);
+        wx.showToast({
+          title: '页面跳转失败',
+          icon: 'none',
+          duration: 2000
+        });
+      }
     });
   }
 });

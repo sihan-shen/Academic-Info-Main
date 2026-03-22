@@ -1,31 +1,20 @@
 """
-用户收藏管理接口
-提供收藏/取消收藏导师、查询收藏列表等功能
+用户收藏接口
+提供导师和合作项目的收藏功能
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Request, Query
-from typing import List, Optional
+from fastapi import APIRouter, HTTPException, Depends, Request
+from typing import Optional, List
 from datetime import datetime
-import uuid
 
 from app.models import User
-from app.schemas.favorite_schema import (
-    FavoriteToggleRequest,
-    FavoriteToggleResponse,
-    FavoriteTutorBrief,
-    FavoriteListResponse,
-    FavoriteStatusResponse,
-    BatchFavoriteStatusRequest,
-    BatchFavoriteStatusResponse
-)
 from app.api.v1.auth.login import get_current_user
 from app.utils import (
     success_response,
     error_response,
-    business_error_response,
     api_logger
 )
-from app.db.mongo import find_one, find_many, insert_one, delete_one, get_collection
+from app.db.mongo import get_db
 
 router = APIRouter(
     prefix="/user",
@@ -34,467 +23,320 @@ router = APIRouter(
 
 
 @router.post(
-    "/favorite/toggle",
+    "/favorite/tutor/{tutor_id}",
     summary="收藏/取消收藏导师",
-    description="切换导师的收藏状态，如果已收藏则取消收藏，如果未收藏则添加收藏"
+    description="切换导师的收藏状态，已收藏则取消，未收藏则添加"
 )
-async def toggle_favorite(
+async def toggle_favorite_tutor(
     request: Request,
-    favorite_request: FavoriteToggleRequest,
-    current_user: User = Depends(get_current_user)
+    tutor_id: str,
+    current_user: Optional[User] = Depends(get_current_user)
 ):
     """
-    收藏/取消收藏导师接口
+    切换导师收藏状态
     
     Args:
         request: 请求对象
-        favorite_request: 收藏请求数据
-        current_user: 当前登录用户（通过JWT token验证）
+        tutor_id: 导师ID
+        current_user: 当前登录用户
     
     Returns:
-        操作结果，包括操作类型（collected/uncollected）和消息
-    
-    Raises:
-        HTTPException: 当导师不存在或操作失败时抛出
+        收藏操作结果
     """
     try:
-        tutor_id = favorite_request.tutor_id
+        db = get_db()
         
-        # 验证导师是否存在
-        tutor = await find_one("tutors", {"id": tutor_id})
-        if not tutor:
-            api_logger.warning(
-                f"导师不存在: {tutor_id}\n"
-                f"User: {current_user.id}\n"
-                f"Request ID: {request.state.request_id}"
+        # 检查用户是否登录
+        if not current_user:
+            raise HTTPException(
+                status_code=401,
+                detail=error_response(message="请先登录")
             )
+        
+        user_id = current_user.id
+        
+        # 检查导师是否存在
+        tutor = await db.tutors.find_one({"id": tutor_id})
+        if not tutor:
             raise HTTPException(
                 status_code=404,
-                detail=business_error_response(
-                    code="TUTOR_NOT_FOUND",
-                    message="导师不存在",
-                    details={"tutor_id": tutor_id}
-                )
+                detail=error_response(message="导师不存在")
             )
         
         # 检查是否已收藏
-        existing_favorite = await find_one(
-            "favorites",
-            {
-                "user_id": current_user.id,
+        existing = await db.favorites.find_one({
+            "user_id": user_id,
+            "target_type": "tutor",
+            "target_id": tutor_id
+        })
+        
+        if existing:
+            # 已收藏，取消收藏
+            await db.favorites.delete_one({
+                "user_id": user_id,
                 "target_type": "tutor",
                 "target_id": tutor_id
-            }
-        )
-        
-        if existing_favorite:
-            # 已收藏，执行取消收藏操作
-            success = await delete_one(
-                "favorites",
-                {"id": existing_favorite["id"]}
-            )
-            
-            if not success:
-                raise HTTPException(
-                    status_code=500,
-                    detail=business_error_response(
-                        code="UNCOLLECT_FAILED",
-                        message="取消收藏失败"
-                    )
-                )
-            
-            api_logger.info(
-                f"取消收藏成功: User {current_user.id} -> Tutor {tutor_id} ({tutor['name']})\n"
-                f"Request ID: {request.state.request_id}"
-            )
-            
-            return success_response(
-                message="取消收藏成功",
-                data=FavoriteToggleResponse(
-                    action="uncollected",
-                    tutor_id=tutor_id,
-                    message="已取消收藏该导师"
-                )
-            )
+            })
+            action = "uncollected"
+            message = "已取消收藏"
         else:
-            # 未收藏，执行收藏操作
+            # 未收藏，添加收藏
             favorite_data = {
-                "id": str(uuid.uuid4()),
-                "user_id": current_user.id,
+                "user_id": user_id,
                 "target_type": "tutor",
                 "target_id": tutor_id,
+                "tutor_name": tutor.get("name", ""),
+                "tutor_school": tutor.get("school", ""),
+                "tutor_department": tutor.get("department", ""),
+                "tutor_avatar": tutor.get("avatar", ""),
+                "tutor_direction": tutor.get("direction", ""),
                 "created_at": datetime.now()
             }
-            
-            favorite_id = await insert_one("favorites", favorite_data)
-            
-            if not favorite_id:
-                raise HTTPException(
-                    status_code=500,
-                    detail=business_error_response(
-                        code="COLLECT_FAILED",
-                        message="收藏失败"
-                    )
-                )
-            
-            api_logger.info(
-                f"收藏成功: User {current_user.id} -> Tutor {tutor_id} ({tutor['name']})\n"
-                f"Request ID: {request.state.request_id}"
-            )
-            
-            return success_response(
-                message="收藏成功",
-                data=FavoriteToggleResponse(
-                    action="collected",
-                    tutor_id=tutor_id,
-                    message="已收藏该导师"
-                )
-            )
+            await db.favorites.insert_one(favorite_data)
+            action = "collected"
+            message = "收藏成功"
+        
+        api_logger.info(
+            f"用户 {user_id} {message}: 导师 {tutor_id}"
+        )
+        
+        return success_response(
+            data={
+                "action": action,
+                "tutor_id": tutor_id,
+                "message": message
+            },
+            message=message
+        )
         
     except HTTPException:
         raise
     except Exception as e:
-        api_logger.error(
-            f"收藏操作失败: {str(e)}\n"
-            f"User: {current_user.id}\n"
-            f"Tutor: {favorite_request.tutor_id}\n"
-            f"Request ID: {request.state.request_id}"
-        )
+        api_logger.error(f"收藏导师失败: {str(e)}, tutor_id={tutor_id}")
         raise HTTPException(
             status_code=500,
-            detail=error_response(
-                message="收藏操作失败",
-                error={"request_id": request.state.request_id}
+            detail=error_response(message=f"操作失败: {str(e)}")
+        )
+
+
+@router.post(
+    "/favorite/coop/{coop_id}",
+    summary="收藏/取消收藏合作项目",
+    description="切换合作项目的收藏状态"
+)
+async def toggle_favorite_coop(
+    request: Request,
+    coop_id: str,
+    current_user: Optional[User] = Depends(get_current_user)
+):
+    """
+    切换合作项目收藏状态
+    """
+    try:
+        db = get_db()
+        
+        if not current_user:
+            raise HTTPException(
+                status_code=401,
+                detail=error_response(message="请先登录")
             )
+        
+        user_id = current_user.id
+        
+        # 检查项目是否存在
+        from bson.objectid import ObjectId
+        coop = await db.coops.find_one({"_id": ObjectId(coop_id)})
+        if not coop:
+            raise HTTPException(
+                status_code=404,
+                detail=error_response(message="项目不存在")
+            )
+        
+        # 检查是否已收藏
+        existing = await db.favorites.find_one({
+            "user_id": user_id,
+            "target_type": "coop",
+            "target_id": coop_id
+        })
+        
+        if existing:
+            # 取消收藏
+            await db.favorites.delete_one({
+                "user_id": user_id,
+                "target_type": "coop",
+                "target_id": coop_id
+            })
+            action = "uncollected"
+            message = "已取消收藏"
+        else:
+            # 添加收藏
+            favorite_data = {
+                "user_id": user_id,
+                "target_type": "coop",
+                "target_id": coop_id,
+                "coop_title": coop.get("title_cn") or coop.get("title", ""),
+                "coop_type": coop.get("type", ""),
+                "coop_tags": coop.get("tags", []),
+                "created_at": datetime.now()
+            }
+            await db.favorites.insert_one(favorite_data)
+            action = "collected"
+            message = "收藏成功"
+        
+        api_logger.info(
+            f"用户 {user_id} {message}: 项目 {coop_id}"
+        )
+        
+        return success_response(
+            data={
+                "action": action,
+                "coop_id": coop_id,
+                "message": message
+            },
+            message=message
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        api_logger.error(f"收藏项目失败: {str(e)}, coop_id={coop_id}")
+        raise HTTPException(
+            status_code=500,
+            detail=error_response(message=f"操作失败: {str(e)}")
         )
 
 
 @router.get(
     "/favorites",
-    summary="获取收藏的导师列表",
-    description="获取当前用户收藏的所有导师，支持分页"
+    summary="获取用户收藏列表",
+    description="获取当前用户收藏的导师和项目列表"
 )
-async def get_favorite_list(
+async def get_user_favorites(
     request: Request,
-    page: int = Query(1, ge=1, description="页码"),
-    page_size: int = Query(10, ge=1, le=100, description="每页数量"),
-    current_user: User = Depends(get_current_user)
+    target_type: Optional[str] = None,  # tutor 或 coop
+    current_user: Optional[User] = Depends(get_current_user)
 ):
     """
-    获取收藏的导师列表接口
+    获取用户收藏列表
     
     Args:
-        request: 请求对象
-        page: 页码
-        page_size: 每页数量
-        current_user: 当前登录用户（通过JWT token验证）
-    
-    Returns:
-        收藏的导师列表，包括分页信息
-    
-    Raises:
-        HTTPException: 当查询失败时抛出
+        target_type: 筛选类型，tutor=导师，coop=项目，不传则返回全部
     """
     try:
-        # 计算分页
-        skip = (page - 1) * page_size
+        db = get_db()
         
-        # 获取用户的收藏记录
-        favorites_collection = get_collection("favorites")
+        if not current_user:
+            raise HTTPException(
+                status_code=401,
+                detail=error_response(message="请先登录")
+            )
         
-        # 获取总数
-        total = await favorites_collection.count_documents({
-            "user_id": current_user.id,
-            "target_type": "tutor"
-        })
+        user_id = current_user.id
         
-        # 获取收藏记录（按收藏时间倒序）
-        favorites_cursor = favorites_collection.find({
-            "user_id": current_user.id,
-            "target_type": "tutor"
-        }).sort("created_at", -1).skip(skip).limit(page_size)
+        # 构建查询条件
+        query = {"user_id": user_id}
+        if target_type:
+            query["target_type"] = target_type
         
-        favorites = await favorites_cursor.to_list(length=page_size)
+        # 获取收藏列表
+        favorites_cursor = db.favorites.find(query).sort("created_at", -1)
+        favorites = await favorites_cursor.to_list(length=1000)
         
-        # 获取导师详细信息
         tutor_list = []
-        for favorite in favorites:
-            tutor_id = favorite["target_id"]
-            tutor = await find_one("tutors", {"id": tutor_id})
-            
-            if tutor:
-                # 构建导师简略信息
-                tutor_brief = FavoriteTutorBrief(
-                    id=tutor["id"],
-                    name=tutor["name"],
-                    title=tutor.get("title"),
-                    school=tutor.get("school_name", ""),
-                    department=tutor.get("department_name", ""),
-                    avatar=tutor.get("avatar_url"),
-                    research_direction=tutor.get("research_direction"),
-                    tags=tutor.get("tags", []),
-                    collected_at=favorite["created_at"]
-                )
-                tutor_list.append(tutor_brief)
+        coop_list = []
+        
+        for fav in favorites:
+            if fav.get("target_type") == "tutor":
+                tutor_list.append({
+                    "id": fav.get("target_id"),
+                    "name": fav.get("tutor_name", ""),
+                    "school": fav.get("tutor_school", ""),
+                    "department": fav.get("tutor_department", ""),
+                    "avatar": fav.get("tutor_avatar", ""),
+                    "direction": fav.get("tutor_direction", ""),
+                    "date": fav.get("created_at", datetime.now()).isoformat() if isinstance(fav.get("created_at"), datetime) else str(fav.get("created_at", ""))
+                })
+            elif fav.get("target_type") == "coop":
+                coop_list.append({
+                    "id": fav.get("target_id"),
+                    "title": fav.get("coop_title", ""),
+                    "type": fav.get("coop_type", ""),
+                    "tags": fav.get("coop_tags", []),
+                    "date": fav.get("created_at", datetime.now()).isoformat() if isinstance(fav.get("created_at"), datetime) else str(fav.get("created_at", ""))
+                })
         
         api_logger.info(
-            f"获取收藏列表成功: User {current_user.id}\n"
-            f"分页: page={page}, page_size={page_size}\n"
-            f"结果: {len(tutor_list)}/{total}\n"
-            f"Request ID: {request.state.request_id}"
+            f"获取用户 {user_id} 收藏列表: 导师 {len(tutor_list)} 个, 项目 {len(coop_list)} 个"
         )
         
         return success_response(
-            message="获取收藏列表成功",
             data={
-                "list": tutor_list,
-                "total": total,
-                "page": page,
-                "page_size": page_size
-            }
-        )
-        
-    except Exception as e:
-        api_logger.error(
-            f"获取收藏列表失败: {str(e)}\n"
-            f"User: {current_user.id}\n"
-            f"Request ID: {request.state.request_id}"
-        )
-        raise HTTPException(
-            status_code=500,
-            detail=error_response(
-                message="获取收藏列表失败",
-                error={"request_id": request.state.request_id}
-            )
-        )
-
-
-@router.get(
-    "/favorite/status/{tutor_id}",
-    summary="查询导师收藏状态",
-    description="查询指定导师是否已被当前用户收藏"
-)
-async def get_favorite_status(
-    request: Request,
-    tutor_id: str,
-    current_user: User = Depends(get_current_user)
-):
-    """
-    查询导师收藏状态接口
-    
-    Args:
-        request: 请求对象
-        tutor_id: 导师ID
-        current_user: 当前登录用户（通过JWT token验证）
-    
-    Returns:
-        收藏状态信息
-    
-    Raises:
-        HTTPException: 当查询失败时抛出
-    """
-    try:
-        # 查询收藏记录
-        favorite = await find_one(
-            "favorites",
-            {
-                "user_id": current_user.id,
-                "target_type": "tutor",
-                "target_id": tutor_id
-            }
-        )
-        
-        is_collected = favorite is not None
-        
-        api_logger.info(
-            f"查询收藏状态: User {current_user.id} -> Tutor {tutor_id}: {is_collected}\n"
-            f"Request ID: {request.state.request_id}"
-        )
-        
-        return success_response(
-            message="查询成功",
-            data=FavoriteStatusResponse(
-                is_collected=is_collected,
-                tutor_id=tutor_id
-            )
-        )
-        
-    except Exception as e:
-        api_logger.error(
-            f"查询收藏状态失败: {str(e)}\n"
-            f"User: {current_user.id}\n"
-            f"Tutor: {tutor_id}\n"
-            f"Request ID: {request.state.request_id}"
-        )
-        raise HTTPException(
-            status_code=500,
-            detail=error_response(
-                message="查询收藏状态失败",
-                error={"request_id": request.state.request_id}
-            )
-        )
-
-
-@router.post(
-    "/favorite/batch-status",
-    summary="批量查询导师收藏状态",
-    description="批量查询多个导师是否已被当前用户收藏"
-)
-async def get_batch_favorite_status(
-    request: Request,
-    batch_request: BatchFavoriteStatusRequest,
-    current_user: User = Depends(get_current_user)
-):
-    """
-    批量查询导师收藏状态接口
-    
-    Args:
-        request: 请求对象
-        batch_request: 批量查询请求数据
-        current_user: 当前登录用户（通过JWT token验证）
-    
-    Returns:
-        收藏状态字典，key为导师ID，value为是否收藏
-    
-    Raises:
-        HTTPException: 当查询失败时抛出
-    """
-    try:
-        tutor_ids = batch_request.tutor_ids
-        
-        # 查询所有相关的收藏记录
-        favorites_collection = get_collection("favorites")
-        favorites_cursor = favorites_collection.find({
-            "user_id": current_user.id,
-            "target_type": "tutor",
-            "target_id": {"$in": tutor_ids}
-        })
-        
-        favorites = await favorites_cursor.to_list(length=len(tutor_ids))
-        
-        # 构建收藏状态字典
-        collected_ids = {fav["target_id"] for fav in favorites}
-        favorites_dict = {
-            tutor_id: (tutor_id in collected_ids)
-            for tutor_id in tutor_ids
-        }
-        
-        api_logger.info(
-            f"批量查询收藏状态: User {current_user.id}\n"
-            f"查询数量: {len(tutor_ids)}\n"
-            f"已收藏数量: {len(collected_ids)}\n"
-            f"Request ID: {request.state.request_id}"
-        )
-        
-        return success_response(
-            message="批量查询成功",
-            data=BatchFavoriteStatusResponse(
-                favorites=favorites_dict
-            )
-        )
-        
-    except Exception as e:
-        api_logger.error(
-            f"批量查询收藏状态失败: {str(e)}\n"
-            f"User: {current_user.id}\n"
-            f"Request ID: {request.state.request_id}"
-        )
-        raise HTTPException(
-            status_code=500,
-            detail=error_response(
-                message="批量查询收藏状态失败",
-                error={"request_id": request.state.request_id}
-            )
-        )
-
-
-@router.delete(
-    "/favorite/{tutor_id}",
-    summary="取消收藏导师（DELETE方法）",
-    description="使用DELETE方法取消收藏指定的导师"
-)
-async def delete_favorite(
-    request: Request,
-    tutor_id: str,
-    current_user: User = Depends(get_current_user)
-):
-    """
-    取消收藏导师接口（DELETE方法）
-    
-    Args:
-        request: 请求对象
-        tutor_id: 导师ID
-        current_user: 当前登录用户（通过JWT token验证）
-    
-    Returns:
-        操作结果
-    
-    Raises:
-        HTTPException: 当导师未收藏或操作失败时抛出
-    """
-    try:
-        # 查询收藏记录
-        favorite = await find_one(
-            "favorites",
-            {
-                "user_id": current_user.id,
-                "target_type": "tutor",
-                "target_id": tutor_id
-            }
-        )
-        
-        if not favorite:
-            api_logger.warning(
-                f"导师未收藏: User {current_user.id} -> Tutor {tutor_id}\n"
-                f"Request ID: {request.state.request_id}"
-            )
-            raise HTTPException(
-                status_code=404,
-                detail=business_error_response(
-                    code="NOT_COLLECTED",
-                    message="该导师未收藏",
-                    details={"tutor_id": tutor_id}
-                )
-            )
-        
-        # 删除收藏记录
-        success = await delete_one("favorites", {"id": favorite["id"]})
-        
-        if not success:
-            raise HTTPException(
-                status_code=500,
-                detail=business_error_response(
-                    code="DELETE_FAILED",
-                    message="取消收藏失败"
-                )
-            )
-        
-        api_logger.info(
-            f"取消收藏成功（DELETE）: User {current_user.id} -> Tutor {tutor_id}\n"
-            f"Request ID: {request.state.request_id}"
-        )
-        
-        return success_response(
-            message="取消收藏成功",
-            data={
-                "tutor_id": tutor_id,
-                "action": "deleted"
-            }
+                "tutors": tutor_list,
+                "coops": coop_list,
+                "total": len(tutor_list) + len(coop_list)
+            },
+            message="获取收藏列表成功"
         )
         
     except HTTPException:
         raise
     except Exception as e:
-        api_logger.error(
-            f"取消收藏失败（DELETE）: {str(e)}\n"
-            f"User: {current_user.id}\n"
-            f"Tutor: {tutor_id}\n"
-            f"Request ID: {request.state.request_id}"
-        )
+        api_logger.error(f"获取收藏列表失败: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail=error_response(
-                message="取消收藏失败",
-                error={"request_id": request.state.request_id}
+            detail=error_response(message=f"获取失败: {str(e)}")
+        )
+
+
+@router.get(
+    "/favorite/status",
+    summary="批量查询收藏状态",
+    description="查询多个导师或项目的收藏状态"
+)
+async def check_favorite_status(
+    request: Request,
+    target_type: str,  # tutor 或 coop
+    target_ids: str,   # 逗号分隔的ID列表
+    current_user: Optional[User] = Depends(get_current_user)
+):
+    """
+    批量查询收藏状态
+    """
+    try:
+        db = get_db()
+        
+        if not current_user:
+            return success_response(
+                data={},
+                message="未登录"
             )
+        
+        user_id = current_user.id
+        ids = [id.strip() for id in target_ids.split(",") if id.strip()]
+        
+        # 查询收藏状态
+        favorites_cursor = db.favorites.find({
+            "user_id": user_id,
+            "target_type": target_type,
+            "target_id": {"$in": ids}
+        })
+        favorites = await favorites_cursor.to_list(length=len(ids))
+        
+        # 构建结果字典
+        result = {}
+        for tid in ids:
+            result[tid] = False
+        for fav in favorites:
+            result[fav.get("target_id")] = True
+        
+        return success_response(
+            data=result,
+            message="查询成功"
+        )
+        
+    except Exception as e:
+        api_logger.error(f"查询收藏状态失败: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=error_response(message=f"查询失败: {str(e)}")
         )

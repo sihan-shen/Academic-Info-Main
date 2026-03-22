@@ -1,3 +1,6 @@
+// pages/research-match/research-match.js
+const apiConfig = require('../../config/api.js');
+
 Page({
   data: {
     discipline: '',
@@ -8,7 +11,8 @@ Page({
       youngScholar: false
     },
     matched: false,
-    tutors: []
+    tutors: [],
+    isLoading: false
   },
 
   onFieldInput(e) {
@@ -32,53 +36,106 @@ Page({
       return;
     }
 
+    this.setData({ isLoading: true });
     wx.showLoading({ title: '匹配中...' });
 
-    setTimeout(() => {
-      wx.hideLoading();
-      this.setData({
-        matched: true,
-        tutors: [
-          {
-            id: 1,
-            name: '张明华',
-            university: '清华大学',
-            department: '计算机科学与技术系',
-            avatar: '/images/default-avatar.png',
-            level: '高度适配',
-            tags: ['人工智能', '国家级项目', '博士生导师'],
-            papers: 58,
-            reason: '研究方向高度吻合，近5年发表相关主题高影响力论文15篇。'
-          },
-          {
-            id: 2,
-            name: '李晓芳',
-            university: '北京大学',
-            department: '信息科学技术学院',
-            avatar: '/images/default-avatar.png',
-            level: '适配',
-            tags: ['机器学习', '国家杰青', '博士生导师'],
-            papers: 42,
-            reason: '学术背景匹配，在自然语言处理领域有深厚积累。'
-          },
-          {
-            id: 3,
-            name: '王建国',
-            university: '浙江大学',
-            department: '控制科学与工程学院',
-            avatar: '/images/default-avatar.png',
-            level: '适配',
-            tags: ['智能控制', '长江学者', '博士生导师'],
-            papers: 36,
-            reason: '跨学科合作潜力大，实验室资源丰富。'
-          }
-        ]
-      });
-    }, 800);
+    // 调用后端真实接口
+    wx.request({
+      url: `${apiConfig.BASE_URL}/api/v1/tutor/match`,
+      method: 'POST',
+      header: {
+        'Content-Type': 'application/json'
+      },
+      data: {
+        subject: this.data.discipline,
+        keywords: this.data.keywords,
+        prefer_cross_school: this.data.prefs.crossSchool,
+        prefer_high_output: this.data.prefs.highOutput,
+        prefer_young: this.data.prefs.youngScholar
+      },
+      success: (res) => {
+        wx.hideLoading();
+        this.setData({ isLoading: false });
+
+        if (res.data && res.data.success) {
+          const tutors = res.data.data.list || [];
+          
+          // 格式化导师数据
+          const formattedTutors = tutors.map(tutor => ({
+            id: tutor.id,
+            name: tutor.name,
+            university: tutor.school || '未知院校',
+            department: tutor.department || '未知院系',
+            avatar: tutor.avatar || '/images/default-avatar.png',
+            title: tutor.title || '教授',
+            level: tutor.match_score >= 90 ? '高度适配' : '适配',
+            matchScore: tutor.match_score || 85,
+            tags: tutor.tags || [],
+            papers: tutor.paper_count || 0,
+            direction: tutor.direction || '',
+            reason: `研究方向${tutor.match_score >= 90 ? '高度' : ''}吻合，在${tutor.direction || '该领域'}有${tutor.paper_count || 0}项相关成果。`
+          }));
+
+          this.setData({
+            matched: true,
+            tutors: formattedTutors
+          });
+
+          console.log('[ResearchMatch] 匹配成功:', formattedTutors);
+        } else {
+          wx.showToast({
+            title: res.data.message || '匹配失败',
+            icon: 'none'
+          });
+        }
+      },
+      fail: (err) => {
+        wx.hideLoading();
+        this.setData({ isLoading: false });
+        console.error('[ResearchMatch] 请求失败:', err);
+        wx.showToast({
+          title: '网络错误，请稍后重试',
+          icon: 'none'
+        });
+      }
+    });
   },
 
+  // 查看导师详情
+  viewTutorDetail(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/tutor-detail/tutor-detail?id=${id}`
+    });
+  },
+
+  // 收藏导师
   onCollect(e) {
-    wx.showToast({ title: '已收藏', icon: 'success' });
+    const id = e.currentTarget.dataset.id;
+    const token = wx.getStorageSync('token');
+    
+    if (!token) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      return;
+    }
+
+    wx.request({
+      url: `${apiConfig.BASE_URL}/api/v1/user/favorite/tutor/${id}`,
+      method: 'POST',
+      header: {
+        'Authorization': `Bearer ${token}`
+      },
+      success: (res) => {
+        if (res.data && res.data.success) {
+          wx.showToast({ title: '已收藏', icon: 'success' });
+        } else {
+          wx.showToast({ title: res.data.message || '收藏失败', icon: 'none' });
+        }
+      },
+      fail: () => {
+        wx.showToast({ title: '网络错误', icon: 'none' });
+      }
+    });
   },
 
   onContact(e) {

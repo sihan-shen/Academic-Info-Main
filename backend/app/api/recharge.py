@@ -1,9 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 from app.db.mongo import get_collection
-from app.api.v1.auth.login import get_current_user
-from app.models.user import User
 
 router = APIRouter(prefix="/recharge", tags=["充值模块"])
 
@@ -11,29 +9,22 @@ router = APIRouter(prefix="/recharge", tags=["充值模块"])
 # 数据模型
 # ------------------------------
 class CreateOrderRequest(BaseModel):
+    openid: str
     amount: float
 
 class PayRequest(BaseModel):
     order_id: str
+    openid: str
 
 # ------------------------------
 # 1. 创建充值订单
 # ------------------------------
 @router.post("/create_order")
-async def create_order(req: CreateOrderRequest, current_user: User = Depends(get_current_user)):
-    user_coll = get_collection("users")
-    user = user_coll.find_one({"id": current_user.id})
-    if not user:
-        raise HTTPException(status_code=404, detail="用户不存在")
-    
-    openid = user.get("openid")
-    if not openid:
-        raise HTTPException(status_code=400, detail="用户OpenID缺失")
-
+async def create_order(req: CreateOrderRequest):
     coll = get_collection("recharge_orders")
 
     order = {
-        "openid": openid,
+        "openid": req.openid,
         "amount": req.amount,
         "status": "pending",  # pending / paid / failed
         "create_time": datetime.now(),
@@ -54,27 +45,14 @@ async def create_order(req: CreateOrderRequest, current_user: User = Depends(get
 # 2. 模拟支付（课程项目必用，不用真微信支付）
 # ------------------------------
 @router.post("/pay")
-async def pay(req: PayRequest, current_user: User = Depends(get_current_user)):
-    user_coll = get_collection("users")
-    user = user_coll.find_one({"id": current_user.id})
-    if not user:
-        raise HTTPException(status_code=404, detail="用户不存在")
-    
-    openid = user.get("openid")
-    if not openid:
-        raise HTTPException(status_code=400, detail="用户OpenID缺失")
-
+async def pay(req: PayRequest):
     order_coll = get_collection("recharge_orders")
+    user_coll = get_collection("users")
 
     # 查找订单
     order = order_coll.find_one({"_id": req.order_id})
     if not order:
         raise HTTPException(status_code=404, detail="订单不存在")
-    
-    # 验证订单属于当前用户
-    if order.get("openid") != openid:
-        raise HTTPException(status_code=403, detail="无权操作此订单")
-
     if order["status"] == "paid":
         raise HTTPException(status_code=400, detail="已支付")
 
@@ -89,7 +67,7 @@ async def pay(req: PayRequest, current_user: User = Depends(get_current_user)):
 
     # 增加余额
     user_coll.update_one(
-        {"openid": openid},
+        {"openid": req.openid},
         {"$inc": {"balance": order["amount"]}},
         upsert=True
     )
@@ -97,7 +75,7 @@ async def pay(req: PayRequest, current_user: User = Depends(get_current_user)):
     # 如果 >=29.9 自动升VIP
     if order["amount"] >= 29.9:
         user_coll.update_one(
-            {"openid": openid},
+            {"openid": req.openid},
             {"$set": {
                 "member_level": "vip",
                 "member_expire": datetime.now() + timedelta(days=90)
@@ -117,9 +95,9 @@ async def pay(req: PayRequest, current_user: User = Depends(get_current_user)):
 # 3. 查询用户余额/会员（给前端用）
 # ------------------------------
 @router.get("/user_info")
-async def user_info(current_user: User = Depends(get_current_user)):
+async def user_info(openid: str):
     user_coll = get_collection("users")
-    user = user_coll.find_one({"id": current_user.id})
+    user = user_coll.find_one({"openid": openid})
 
     if not user:
         return {
